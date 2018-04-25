@@ -1,0 +1,5 @@
+django>=2.0
+django-user-accounts
+psycopg2-binary
+zappa
+boto3

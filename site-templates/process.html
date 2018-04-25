@@ -1,0 +1,10 @@
+YO
+<h1>Processing dataset: {{ dataset }}</h1>
+<br />
+<h3>{{ key }}</h3>
+<img src="{{ key_src }}" />
+<select multiple>
+    {% for label in labels %}
+    <option value="{{ label }} ">{{ label }}</option>
+    {% endfor %}
+</select>
