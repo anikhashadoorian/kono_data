@@ -16,13 +16,20 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path, include, re_path
+from django.views.generic import RedirectView
+from django.contrib.auth.views import login, logout
 
-from kono_data import views
-from kono_data.views import ProcessView
+from kono_data.views import IndexView, process, show_dataset, index_dataset
 
 urlpatterns = [
+    url(r'^accounts/logout/$', logout, name='logout'),
+    url(r'^accounts/login/$', login, {'template_name': 'admin/login.html'}, name='login'),
+    url(r'^accounts/profile/$', RedirectView.as_view(url='/')),
+    url(r'^accounts/$', RedirectView.as_view(url='/')),
     url(r'^admin_tools/', include('admin_tools.urls')),
     path('admin/', admin.site.urls),
-    path('', views.index, name='index'),
-    path('process/<uuid:dataset>', ProcessView.as_view(), name='process')
+    path('', IndexView.as_view(), name='index'),
+    path('process/<uuid:dataset>', process, name='process'),
+    path('datasets/<uuid:dataset>', show_dataset, name='show_dataset'),
+    path('datasets/<str:type>', index_dataset, name='datasets'),
 ]

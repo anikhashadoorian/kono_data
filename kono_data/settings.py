@@ -40,8 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'bootstrap4',
     'account',
-    'data_model'
+    'data_model',
 ]
 
 MIDDLEWARE = [
@@ -58,8 +59,8 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'kono_data.urls'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'site-templates/'),]
-
+TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'site-templates/'), ]
+# STATICFILE_DIRS = [os.path.join(BASE_DIR, 'static'), ]
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -82,7 +83,7 @@ TEMPLATES = [
 ]
 
 FIXTURE_DIRS = (
-   '/data_model/fixtures/',
+    '/data_model/fixtures/',
 )
 
 WSGI_APPLICATION = 'kono_data.wsgi.application'

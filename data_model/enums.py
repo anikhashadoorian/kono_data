@@ -14,3 +14,8 @@ class SourceType(ChoiceEnum):
 class AwsRegionType(ChoiceEnum):
     eu_central_1 = 'eu-central-1'
     eu_west_1 = 'eu-west-1'
+
+
+class LabelingApproachEnum(ChoiceEnum):
+    width_first = 'width_first'
+    depth_first = 'depth_first'

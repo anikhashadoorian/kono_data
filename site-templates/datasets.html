@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h3>{{ type }} datasets</h3>
+{% if datasets %}
+<div class="row">
+    {% for dataset in datasets %}
+    <div class="col-4">
+    {% include "partials/dataset.html" with dataset=dataset %}
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p>No {{type}} datasets created</p>
+{% endif %}
+{% endblock %}

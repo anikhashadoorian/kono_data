@@ -1,10 +1,30 @@
-YO
-<h1>Processing dataset: {{ dataset }}</h1>
-<br />
+{% extends "base.html" %}
+
+{% load bootstrap4 %}
+{% bootstrap_css %}
+{% bootstrap_messages %}
+
+{% block content %}
+<h2>Processing dataset: {{ dataset.title }}</h2>
+<br/>
+{% if key %}
 <h3>{{ key }}</h3>
-<img src="{{ key_src }}" />
-<select multiple>
-    {% for label in labels %}
-    <option value="{{ label }} ">{{ label }}</option>
-    {% endfor %}
-</select>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col offset-md-1">
+            <img src="{{ key_src }}" height="320"/>
+        </div>
+        <div class="col form-group">
+            <form action="{% url 'process' dataset.id %}" method="post" class="form">
+                {% csrf_token %}
+                {% bootstrap_form form layout='inline' %}
+                <input type="hidden" name="key" value="{{ key }}"/>
+                <button type="submit" class="btn btn-primary">Save Label</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% else %}
+You've labeled the whole dataset, thank youuuuu!
+{% endif %}
+{% endblock %}

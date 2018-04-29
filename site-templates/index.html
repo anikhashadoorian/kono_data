@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<br />
+<h3>Public datasets</h3>
+<div class="row">
+    {% for dataset in datasets %}
+    <div class="col-4">
+        {% include "partials/dataset.html" with dataset=dataset %}
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
