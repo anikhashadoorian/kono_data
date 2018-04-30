@@ -15,7 +15,7 @@ class Dataset(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    source_uri = models.CharField(blank=False, null=False, max_length=32,
+    source_uri = models.CharField(blank=False, null=False, max_length=128,
                                   help_text='Give Amazon Resource Name (ARN), e.g.: "arn:aws:s3:::test-kono-data"')
     source_region = models.CharField(choices=AwsRegionType.choices(),
                                      default=AwsRegionType.eu_west_1,
@@ -42,8 +42,8 @@ class Dataset(models.Model):
         null=True, blank=True,
         size=10000, help_text='Keys in your dataset, will be automatically fetched and overwritten each time you save.')
 
-    admins = models.ManyToManyField(User, related_name='admin_datasets')
-    contributors = models.ManyToManyField(User, related_name='contributor_datasets')
+    admins = models.ManyToManyField(User, related_name='admin_datasets', blank=True)
+    contributors = models.ManyToManyField(User, related_name='contributor_datasets', blank=True)
 
     def __str__(self):
         return f'{self.user} - {self.source_region} - {self.source_uri} - public: {self.is_public}'

@@ -1,3 +1,5 @@
+from urllib.parse import quote
+
 from django.contrib import messages
 from django.db.models import Count, F, IntegerField, Sum, ExpressionWrapper, DecimalField
 from django.db.models.functions import Length
@@ -40,12 +42,15 @@ def process(request, **kwargs):
         messages.add_message(request, 10, 'Trying to process an unknown dataset. Return to home page')
     else:
         context['form'] = form
-        key = get_unprocessed_key(request.user, dataset)
-        bucket = get_s3_bucket_from_aws_arn(dataset.source_uri)
         context['dataset'] = dataset
-        context['key'] = key
-        context['key_src'] = f'https://s3-{dataset.source_region}.amazonaws.com/{bucket}/{key}'
         context['labels'] = dataset.possible_labels
+
+        bucket = get_s3_bucket_from_aws_arn(dataset.source_uri)
+        key = get_unprocessed_key(request.user, dataset)
+        if key:
+            encoded_key = quote(key)
+            context['key'] = key
+            context['key_src'] = f'https://s3-{dataset.source_region}.amazonaws.com/{bucket}/{encoded_key}'
 
     return render(request, "process.html", context)
 

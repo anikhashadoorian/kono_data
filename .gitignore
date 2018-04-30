@@ -1,2 +1,3 @@
 kono_data/dev_settings.py
 static/*
+zappa_settings.json
