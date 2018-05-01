@@ -86,6 +86,13 @@ class Dataset(models.Model):
     def nr_required_labels(self) -> int:
         return len(self.source_keys) * self.min_labels_per_key
 
+    def is_user_authorized(self, user: User) -> bool:
+        if self.is_public:
+            return True
+        else:
+            return self.user == user or user.admin_datasets.filter(id=self.id).exists() \
+                   or user.contributor_datasets.filter(id=self.id).exists()
+
 
 class Label(models.Model):
     class Meta:

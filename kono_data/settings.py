@@ -95,6 +95,7 @@ ROOT_URLCONF = 'kono_data.urls'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'site-templates/'), ]
 # STATICFILE_DIRS = [os.path.join(BASE_DIR, 'static'), ]
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -111,7 +112,10 @@ TEMPLATES = [
                 'django.template.loaders.filesystem.Loader',
                 'django.template.loaders.app_directories.Loader',
                 'admin_tools.template_loaders.Loader'
-            ]
+            ],
+            'builtins': [
+                'django.contrib.staticfiles.templatetags.staticfiles',
+            ],
         },
     },
 ]

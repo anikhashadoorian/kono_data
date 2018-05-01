@@ -2,8 +2,7 @@ import logging
 from urllib.parse import quote
 
 from django.contrib import messages
-from django.db.models import Count, F, IntegerField, Sum, ExpressionWrapper, DecimalField
-from django.db.models.functions import Length
+from django.db.models import Q
 from django.shortcuts import redirect, render
 from django.views.generic import TemplateView
 
@@ -27,22 +26,29 @@ class IndexView(TemplateView):
 
 def process(request, **kwargs):
     context = {}
+
+    user = request.user
     dataset_id = kwargs.get('dataset')
     dataset = Dataset.objects.filter(id=dataset_id).first()
+
+    if not dataset.is_user_authorized(user):
+        messages.error(request, 'You\'re not authorized to process this dataset =(')
+        return redirect('index')
+
     form = ProcessForm(request.POST or None, labels=dataset.possible_labels)
 
     if form.is_valid():
-        if request.user.is_anonymous:
+        if user.is_anonymous:
             messages.add_message(request, 10, 'Sign up or Login to label and use your data')
         else:
             key = form.data.get('key')
-            Label.objects.create(user=request.user, dataset=dataset, key=key, data=form.cleaned_data)
+            Label.objects.create(user=user, dataset=dataset, key=key, data=form.cleaned_data)
         return redirect("process", dataset=dataset_id)
 
     context['form'] = form
     context['dataset'] = dataset
     bucket = get_s3_bucket_from_aws_arn(dataset.source_uri)
-    key = get_unprocessed_key(request.user, dataset)
+    key = get_unprocessed_key(user, dataset)
 
     if key:
         encoded_key = quote(key)
@@ -64,10 +70,12 @@ def index_dataset(request, **kwargs):
     context = {}
     type = kwargs.get('type')
     context['type'] = type
+    user = request.user
     if type == 'public':
         datasets = Dataset.objects.filter(is_public=True)
-    elif not request.user.is_anonymous:
-        datasets = Dataset.objects.filter(is_public=False, user=request.user)
+    elif not user.is_anonymous:
+        datasets = Dataset.objects.filter(Q(is_public=False) &
+                                          (Q(user=user) | Q(admins__id=user.id) | Q(contributors__id=user.id)))
     else:
         datasets = []
 

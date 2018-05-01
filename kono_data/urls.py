@@ -14,12 +14,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.conf.urls import url
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include, re_path
 from django.views.generic import RedirectView
 from django.contrib.auth.views import login, logout
 
+from kono_data import settings
 from kono_data.views import IndexView, process, show_dataset, index_dataset
+
 
 urlpatterns = [
     url(r'^accounts/logout/$', logout, name='logout'),
@@ -32,4 +35,5 @@ urlpatterns = [
     path('process/<uuid:dataset>', process, name='process'),
     path('datasets/<uuid:dataset>', show_dataset, name='show_dataset'),
     path('datasets/<str:type>', index_dataset, name='datasets'),
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
