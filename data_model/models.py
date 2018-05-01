@@ -1,3 +1,4 @@
+import logging
 import uuid
 from typing import List
 
@@ -5,12 +6,18 @@ import boto3
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import JSONField, ArrayField
 from django.db import models
+from django.utils import timezone
 
 from data_model.enums import AwsRegionType, LabelingApproachEnum
 from kono_data.utils import get_s3_bucket_from_aws_arn
 
+logger = logging.getLogger(__name__)
+
 
 class Dataset(models.Model):
+    class Meta:
+        db_table = 'Dataset'
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -35,13 +42,10 @@ class Dataset(models.Model):
                                                           help_text='How many labels should be saved for each key')
     possible_labels = ArrayField(
         models.CharField(max_length=128, blank=False),
-        size=1000, help_text='Give a comma-separated list of the labels in your dataset. Example: "hotdog, not hotdog"'
+        help_text='Give a comma-separated list of the labels in your dataset. Example: "hotdog, not hotdog"'
     )
-    source_keys = ArrayField(
-        models.CharField(max_length=255),
-        null=True, blank=True,
-        size=10000, help_text='Keys in your dataset, will be automatically fetched and overwritten each time you save.')
-
+    source_data = JSONField(null=True, blank=True,
+                            help_text='Keys in your dataset, will be automatically fetched and overwritten each time you save.')
     admins = models.ManyToManyField(User, related_name='admin_datasets', blank=True)
     contributors = models.ManyToManyField(User, related_name='contributor_datasets', blank=True)
 
@@ -53,12 +57,26 @@ class Dataset(models.Model):
         super(Dataset, self).save(*args, **kwargs)
 
     def fetch_keys_from_source(self):
-        bucket_name = get_s3_bucket_from_aws_arn(self.source_uri)
+        bucket_name = get_s3_bucket_from_aws_arn(str(self.source_uri))
         s3 = boto3.client('s3')
-        response = s3.list_objects_v2(Bucket=bucket_name)
-        if response['ResponseMetadata']['HTTPStatusCode'] == 200:
-            contents = response['Contents']
-            self.source_keys = list(map(lambda obj: obj['Key'], contents))
+        paginator = s3.get_paginator('list_objects')
+        page_response = paginator.paginate(Bucket=bucket_name)
+
+        keys = []
+        logger.info('start to fetch keys from bucket: %s', bucket_name)
+        for response in page_response:
+            if response['ResponseMetadata']['HTTPStatusCode'] == 200:
+                contents = response['Contents']
+                keys += list(map(lambda obj: obj['Key'], contents))
+                logger.info('received %s keys from bucket %s', len(contents), bucket_name)
+
+        self.source_data['keys'] = keys
+        self.source_data['nr_keys'] = len(keys)
+        self.source_data['last_fetch'] = timezone.now().isoformat()
+
+    @property
+    def source_keys(self):
+        return self.source_data['keys']
 
     @property
     def is_done(self) -> bool:
@@ -70,22 +88,21 @@ class Dataset(models.Model):
 
 
 class Label(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE)
+    class Meta:
+        db_table = 'Label'
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='labels')
+    dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE, related_name='labels')
     key = models.CharField(max_length=64, null=True)
     data = JSONField()
 
 
-def already_processed_keys(user: User, dataset: Dataset) -> List[str]:
+def get_unprocessed_keys(user: User, dataset: Dataset, n: int) -> List:
     if user.is_anonymous:
         return []
 
-    return list(Label.objects.filter(dataset=dataset, user=user).values_list('key', flat=True))
-
-
-def get_unprocessed_keys(user: User, dataset: Dataset, n: int) -> List:
-    processed_keys = already_processed_keys(user, dataset)
-    unprocessed_keys = set(dataset.source_keys) - set(processed_keys)
+    labels = user.labels.values_list('key', flat=True)
+    unprocessed_keys = set(dataset.source_keys) - set(labels)
     return list(unprocessed_keys)
 
 

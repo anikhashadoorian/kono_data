@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% load bootstrap4 %}
 {% block content %}
-<br />
+<br/>
 <h2>Processing dataset: {{ dataset.title }}</h2>
 <br/>
 {% if key %}
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-12 col-md-6">
-            <img src="{{ key_src }}" class="img-thumbnail media img-responsive" alt="Responsive image" />
+            <img src="{{ key_src }}" class="img-thumbnail media img-responsive" alt="Responsive image"/>
         </div>
         <div class="col-sm-12 col-md-6">
             <div>
@@ -16,7 +16,7 @@
                     {% csrf_token %}
                     {% bootstrap_form form layout='inline' %}
                     <input type="hidden" name="key" value="{{ key }}"/>
-                    <button type="submit" class="btn btn-primary">Save Label</button>
+                    <button type="submit" class="btn btn-success">Save</button>
                 </form>
             </div>
         </div>

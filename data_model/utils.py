@@ -1,9 +1,10 @@
+from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.db.models import ExpressionWrapper, F, Count, QuerySet, FloatField
 from django.db.models.functions import Cast
 
 
 def annotate_datasets_for_view(datasets: QuerySet):
-    annotated = datasets.extra(select={'nr_source_keys': 'cardinality(source_keys)'}).annotate(nr_labels=Count('label'))
+    annotated = datasets.annotate(nr_source_keys=KeyTextTransform('nr_keys', 'source_data'), nr_labels=Count('labels'))
     annotated = annotated.annotate(
         submitted_keys=ExpressionWrapper(F('nr_labels') / Cast(F('min_labels_per_key'), FloatField()),
                                          output_field=FloatField())

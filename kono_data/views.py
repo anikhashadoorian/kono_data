@@ -1,3 +1,4 @@
+import logging
 from urllib.parse import quote
 
 from django.contrib import messages
@@ -10,6 +11,8 @@ from data_model.models import Dataset, get_unprocessed_key, Label
 from data_model.utils import annotate_datasets_for_view
 from kono_data.forms import ProcessForm
 from kono_data.utils import get_s3_bucket_from_aws_arn
+
+logger = logging.getLogger(__name__)
 
 
 class IndexView(TemplateView):
@@ -25,12 +28,10 @@ class IndexView(TemplateView):
 def process(request, **kwargs):
     context = {}
     dataset_id = kwargs.get('dataset')
-
     dataset = Dataset.objects.filter(id=dataset_id).first()
-    form = ProcessForm(request.POST or None, extra=dataset.possible_labels)
+    form = ProcessForm(request.POST or None, labels=dataset.possible_labels)
+
     if form.is_valid():
-        # do_something_with(form.cleaned_data)
-        # save label here
         if request.user.is_anonymous:
             messages.add_message(request, 10, 'Sign up or Login to label and use your data')
         else:
@@ -38,19 +39,15 @@ def process(request, **kwargs):
             Label.objects.create(user=request.user, dataset=dataset, key=key, data=form.cleaned_data)
         return redirect("process", dataset=dataset_id)
 
-    if not dataset_id:
-        messages.add_message(request, 10, 'Trying to process an unknown dataset. Return to home page')
-    else:
-        context['form'] = form
-        context['dataset'] = dataset
-        context['labels'] = dataset.possible_labels
+    context['form'] = form
+    context['dataset'] = dataset
+    bucket = get_s3_bucket_from_aws_arn(dataset.source_uri)
+    key = get_unprocessed_key(request.user, dataset)
 
-        bucket = get_s3_bucket_from_aws_arn(dataset.source_uri)
-        key = get_unprocessed_key(request.user, dataset)
-        if key:
-            encoded_key = quote(key)
-            context['key'] = key
-            context['key_src'] = f'https://s3-{dataset.source_region}.amazonaws.com/{bucket}/{encoded_key}'
+    if key:
+        encoded_key = quote(key)
+        context['key'] = key
+        context['key_src'] = f'https://s3-{dataset.source_region}.amazonaws.com/{bucket}/{encoded_key}'
 
     return render(request, "process.html", context)
 
@@ -61,13 +58,6 @@ def show_dataset(request, **kwargs):
     context = {}
     context['dataset'] = annotate_datasets_for_view(dataset).first()
     return render(request, "show_dataset.html", context)
-
-
-from django.db.models import Aggregate
-
-
-class SumCardinality(Aggregate):
-    template = 'SUM(CARDINALITY(%(expressions)s))'
 
 
 def index_dataset(request, **kwargs):
