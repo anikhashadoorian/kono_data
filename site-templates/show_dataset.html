@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
+<br />
+<h1>Dataset</h1>
 <div class="row">
     <div class="col-4">
-        {% include "partials/dataset.html" with dataset=dataset %}
+        {% include "partials/dataset.html" with is_details_page=True%}
     </div>
 </div>
 {% endblock %}

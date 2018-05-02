@@ -21,7 +21,7 @@ from django.views.generic import RedirectView
 from django.contrib.auth.views import login, logout
 
 from kono_data import settings
-from kono_data.views import IndexView, process, show_dataset, index_dataset
+from kono_data.views import IndexView, process, show_dataset, index_dataset, export_dataset
 
 
 urlpatterns = [
@@ -34,6 +34,7 @@ urlpatterns = [
     path('', IndexView.as_view(), name='index'),
     path('process/<uuid:dataset>', process, name='process'),
     path('datasets/<uuid:dataset>', show_dataset, name='show_dataset'),
+    path('datasets/<uuid:dataset>/export', export_dataset, name='export_dataset'),
     path('datasets/<str:type>', index_dataset, name='datasets'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

@@ -1,24 +1,43 @@
 {% block dataset %}
+
 <div class="row">
     <div class="col-12">
-        <b>
-        <a href="{% url 'show_dataset' dataset.id %}">{{ dataset.title }}</a>
-        </b>
+        <h3>{{ dataset.title }}</h3>
     </div>
 </div>
 <div class="row">
     <div class="col-12">{{ dataset.description }}</div>
 </div>
-<div class="row">
-    <div class="col-6">Labeled: {% widthratio dataset.submitted_keys dataset.nr_source_keys 100 %}%</div>
-    <div class="col-6">Approach: {{ dataset.labeling_approach }}</div>
+<br/>
+
+<div class="progress">
+    <div class="progress-bar {% if dataset.processed_percentage < 1 %}text-dark{% endif %}" role="progressbar"
+         aria-valuenow="25" style="width:{{ dataset.processed_percentage  }}%"
+         aria-valuemin="0" aria-valuemax="100">{{ dataset.processed_percentage|floatformat:0 }}%
+    </div>
 </div>
 <div class="row">
-    <div class="col-6">Keys: {{ dataset.nr_source_keys }}</div>
-    <div class="col-6">Labels per Key: {{ dataset.min_labels_per_key }}</div>
+    <div class="progress">
+        <div class="progress-bar w-75" role="progressbar" aria-valuenow="75" aria-valuemin="0"
+             aria-valuemax="100"></div>
+    </div>
 </div>
-<hr />
 <div class="row">
-    <a href="{% url 'process' dataset.id %}" role="button" class="col-8 col-md-8 offset-md-2 btn btn-success">Start</a>
+    <div class="col-5">Keys: {{ dataset.nr_source_keys }}</div>
+    <div class="col-8">Required labels per Key: {{ dataset.min_labels_per_key }}</div>
+</div>
+<hr/>
+<div class="row justify-content-center">
+    <div class="btn-group" role="group">
+        <a href="{% url 'process' dataset.id %}" role="button"
+           class="btn btn-info">Start 🚀</a>
+        {% if is_user_authorised_to_export %}
+        <a href="{% url 'export_dataset' dataset.id %}" role="button"
+           class="btn btn-outline-info">Export 📦</a>
+        {% elif not is_details_page %}
+        <a href="{% url 'show_dataset' dataset.id %}" role="button"
+           class="btn btn-outline-info">Details 🔍</a>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

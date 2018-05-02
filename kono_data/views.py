@@ -1,11 +1,15 @@
 import logging
+import tempfile
 from urllib.parse import quote
 
 from django.contrib import messages
 from django.db.models import Q
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
+from django.utils.text import slugify
 from django.views.generic import TemplateView
 
+from data_model.export_models import ExportModel
 from data_model.models import Dataset, get_unprocessed_key, Label
 from data_model.utils import annotate_datasets_for_view
 from kono_data.forms import ProcessForm
@@ -31,7 +35,7 @@ def process(request, **kwargs):
     dataset_id = kwargs.get('dataset')
     dataset = Dataset.objects.filter(id=dataset_id).first()
 
-    if not dataset.is_user_authorized(user):
+    if not dataset.is_user_authorised_to_process(user):
         messages.error(request, 'You\'re not authorized to process this dataset =(')
         return redirect('index')
 
@@ -60,10 +64,34 @@ def process(request, **kwargs):
 
 def show_dataset(request, **kwargs):
     dataset_id = kwargs.get('dataset')
-    dataset = Dataset.objects.filter(id=dataset_id)
-    context = {}
-    context['dataset'] = annotate_datasets_for_view(dataset).first()
+    datasets = Dataset.objects.filter(id=dataset_id)
+    dataset = datasets.first()
+
+    if not dataset.is_user_authorised_to_process(request.user):
+        messages.error(request, 'You\'re not authorized to view this dataset =(')
+        return redirect('index')
+
+    is_user_authorised_to_export = dataset.is_user_authorised_to_export(request.user)
+    context = {'dataset': annotate_datasets_for_view(datasets).first(),
+               'is_user_authorised_to_export': is_user_authorised_to_export}
     return render(request, "show_dataset.html", context)
+
+
+def export_dataset(request, **kwargs):
+    user = request.user
+    dataset_id = kwargs.get('dataset')
+    dataset = Dataset.objects.filter(id=dataset_id).first()
+
+    if not dataset.is_user_authorised_to_export(user):
+        messages.error(request, 'You\'re not authorized to export this dataset =(')
+        return redirect('index')
+
+    queryset = Label.objects.filter(dataset=dataset)
+    with tempfile.NamedTemporaryFile() as f:
+        ExportModel.as_csv(f.name, queryset)
+        response = HttpResponse(f.read(), content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename={}.csv'.format(slugify(dataset))
+    return response
 
 
 def index_dataset(request, **kwargs):

@@ -160,6 +160,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
+LOGOUT_REDIRECT_URL = '/'
 STATIC_URL = '/static/'
 ADMIN_TOOLS_MENU = 'kono_data.menu.CustomMenu'
 ADMIN_TOOLS_INDEX_DASHBOARD = 'kono_data.dashboard.CustomIndexDashboard'

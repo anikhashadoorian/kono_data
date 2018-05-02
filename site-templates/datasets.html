@@ -2,12 +2,13 @@
 
 {% block content %}
 <br/>
-<h3>{{ type }} datasets</h3>
+<br/>
+<h2>{{ type }} datasets</h2>
 {% if datasets %}
 <div class="row">
     {% for dataset in datasets %}
-    <div class="col-4">
-        {% include "partials/dataset.html" with dataset=dataset %}
+    <div class="col-5">
+        {% include "partials/dataset.html" %}
     </div>
     {% endfor %}
 </div>

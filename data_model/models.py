@@ -50,9 +50,11 @@ class Dataset(models.Model):
     contributors = models.ManyToManyField(User, related_name='contributor_datasets', blank=True)
 
     def __str__(self):
-        return f'{self.user} - {self.source_region} - {self.source_uri} - public: {self.is_public}'
+        return f'{self.title} - {self.source_region} - {self.source_uri} - public: {self.is_public}'
 
     def save(self, *args, **kwargs):
+        if not self.source_data:
+            self.source_data = {'keys': [], 'nr_keys': 0, 'last_fetch': ''}
         self.fetch_keys_from_source()
         super(Dataset, self).save(*args, **kwargs)
 
@@ -86,12 +88,22 @@ class Dataset(models.Model):
     def nr_required_labels(self) -> int:
         return len(self.source_keys) * self.min_labels_per_key
 
-    def is_user_authorized(self, user: User) -> bool:
+    def is_user_authorised_to_process(self, user: User) -> bool:
         if self.is_public:
             return True
+        elif user.is_anonymous:
+            return False
         else:
             return self.user == user or user.admin_datasets.filter(id=self.id).exists() \
                    or user.contributor_datasets.filter(id=self.id).exists()
+
+    def is_user_authorised_to_export(self, user: User) -> bool:
+        if self.is_public:
+            return True
+        elif user.is_anonymous:
+            return False
+        else:
+            return self.user == user or user.admin_datasets.filter(id=self.id).exists()
 
 
 class Label(models.Model):
@@ -100,7 +112,7 @@ class Label(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='labels')
     dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE, related_name='labels')
-    key = models.CharField(max_length=64, null=True)
+    key = models.CharField(max_length=64)
     data = JSONField()
 
 
