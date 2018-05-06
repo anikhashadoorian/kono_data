@@ -43,7 +43,7 @@ def process(request, **kwargs):
 
     if form.is_valid():
         if user.is_anonymous:
-            messages.add_message(request, 10, 'Sign up or Login to label and use your data')
+            messages.info(request, 'Sign up or Login to label this dataset')
         else:
             key = form.data.get('key')
             Label.objects.create(user=user, dataset=dataset, key=key, data=form.cleaned_data)

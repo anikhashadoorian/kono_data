@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 zappa update prod
 # zappa invoke prod "from django.contrib.auth.models import User; User.objects.filter(email='admin@example.com').delete(); User.objects.create_superuser('admin', 'admin@example.com', 'nimda')" --raw
 zappa manage prod migrate

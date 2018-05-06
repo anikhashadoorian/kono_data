@@ -52,7 +52,7 @@ class Dataset(models.Model):
     contributors = models.ManyToManyField(User, related_name='contributor_datasets', blank=True)
 
     def __str__(self):
-        return f'{self.title} - {self.source_region} - {self.source_uri} - public: {self.is_public}'
+        return f'{self.title} - {self.source_region}'
 
     def clean_fields(self, exclude=None):
         if S3_ARN_PREFIX in self.source_uri:
