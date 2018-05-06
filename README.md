@@ -18,12 +18,11 @@ Click the checkbox or type the number and a label is selected.
 One or all labels can be selected. If you click _Save_ or hit enter the labeling for this 
 image is saved and the next image in the dataset is loaded.
 
-![](docs/img/label_hotdog.png)
+<img src="docs/img/label_hotdog.png" alt="" style="height: 200px;" />
 
 ## How can I see the labeling progress of a dataset?
 ## How can I export a dataset?
-![](docs/img/export_hotdog.png)
-
+<img src="docs/img/export_hotdog.png" alt="" style="height: 200px;" />
 
 ## Installation
 This app is written in Python 3 and based on [Django](https://www.djangoproject.com/).

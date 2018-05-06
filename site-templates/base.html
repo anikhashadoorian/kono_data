@@ -40,8 +40,9 @@
                 <a class="nav-link dropdown-toggle" href="#" id="dropdown10"
                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Datasets</a>
                 <div class="dropdown-menu" aria-labelledby="dropdown10">
-                    <a class="dropdown-item" href="{% url 'datasets' type='public' %}">Public</a>
-                    <a class="dropdown-item" href="{% url 'datasets' type='private' %}">Private</a>
+                    <a class="dropdown-item" href="{% url 'update_or_create_dataset' %}">Create 🔧</a>
+                    <a class="dropdown-item" href="{% url 'datasets' type='public' %}">Public 🤲🏽</a>
+                    <a class="dropdown-item" href="{% url 'datasets' type='private' %}">Private 🔒</a>
                 </div>
             </li>
             <!--

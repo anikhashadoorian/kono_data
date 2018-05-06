@@ -16,25 +16,27 @@ Including another URLconf
 from django.conf.urls import url
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path, include, re_path
+from django.urls import path, include
 from django.views.generic import RedirectView
 from django.contrib.auth.views import login, logout
 
 from kono_data import settings
-from kono_data.views import IndexView, process, show_dataset, index_dataset, export_dataset
-
+from kono_data.views import IndexView, process, index_dataset, export_dataset, update_or_create_dataset, \
+    fetch_dataset_from_source
 
 urlpatterns = [
-    url(r'^accounts/logout/$', logout, name='logout'),
-    url(r'^accounts/login/$', login, {'template_name': 'admin/login.html'}, name='login'),
-    url(r'^accounts/profile/$', RedirectView.as_view(url='/')),
-    url(r'^accounts/$', RedirectView.as_view(url='/')),
-    url(r'^admin_tools/', include('admin_tools.urls')),
-    path('admin/', admin.site.urls),
-    path('', IndexView.as_view(), name='index'),
-    path('process/<uuid:dataset>', process, name='process'),
-    path('datasets/<uuid:dataset>', show_dataset, name='show_dataset'),
-    path('datasets/<uuid:dataset>/export', export_dataset, name='export_dataset'),
-    path('datasets/<str:type>', index_dataset, name='datasets'),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
+                  url(r'^accounts/logout/$', logout, name='logout'),
+                  url(r'^accounts/login/$', login, {'template_name': 'admin/login.html'}, name='login'),
+                  url(r'^accounts/profile/$', RedirectView.as_view(url='/')),
+                  url(r'^accounts/$', RedirectView.as_view(url='/')),
+                  url(r'^admin_tools/', include('admin_tools.urls')),
+                  path('admin/', admin.site.urls),
+                  path('', IndexView.as_view(), name='index'),
+                  path('dataset/create/', update_or_create_dataset, name='update_or_create_dataset'),
+                  path('process/<uuid:dataset>', process, name='process'),
+                  path('dataset/<uuid:dataset>', update_or_create_dataset, name='update_or_create_dataset'),
+                  path('dataset/<uuid:dataset>/export', export_dataset, name='export_dataset'),
+                  path('dataset/<uuid:dataset>/fetch', fetch_dataset_from_source, name='fetch_dataset'),
+                  path('dataset/<str:type>', index_dataset, name='datasets'),
+              ] + static(settings.STATIC_URL,
+                         document_root=settings.STATIC_ROOT)

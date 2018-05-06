@@ -12,8 +12,8 @@ from django.views.generic import TemplateView
 from data_model.export_models import ExportModel
 from data_model.models import Dataset, get_unprocessed_key, Label
 from data_model.utils import annotate_datasets_for_view
-from kono_data.forms import ProcessForm
-from kono_data.utils import get_s3_bucket_from_aws_arn
+from kono_data.forms import ProcessForm, DatasetForm
+from kono_data.utils import get_s3_bucket_from_str
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +24,7 @@ class IndexView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         datasets = Dataset.objects.filter(is_public=True).order_by('-id')
-        context['datasets'] = annotate_datasets_for_view(datasets)[:10]
+        context['datasets'] = annotate_datasets_for_view(datasets, context['view'].request.user)[:10]
         return context
 
 
@@ -35,7 +35,7 @@ def process(request, **kwargs):
     dataset_id = kwargs.get('dataset')
     dataset = Dataset.objects.filter(id=dataset_id).first()
 
-    if not dataset.is_user_authorised_to_process(user):
+    if not dataset.is_user_authorised_to_contribute(user):
         messages.error(request, 'You\'re not authorized to process this dataset =(')
         return redirect('index')
 
@@ -51,30 +51,65 @@ def process(request, **kwargs):
 
     context['form'] = form
     context['dataset'] = dataset
-    bucket = get_s3_bucket_from_aws_arn(dataset.source_uri)
-    key = get_unprocessed_key(user, dataset)
+    if not dataset.source_keys:
+        if dataset.is_user_authorised_admin(user):
+            messages.info(request, f'Dataset "{dataset}" has no keys. Fetch new data to start processing')
+            return redirect("update_or_create_dataset", dataset=dataset_id)
+        else:
+            messages.info(request, f'Dataset "{dataset}" has no keys. Ask your admin to fetch data to start processing')
+            return redirect("index")
 
+    key = get_unprocessed_key(user, dataset)
     if key:
         encoded_key = quote(key)
+        bucket = get_s3_bucket_from_str(dataset.source_uri)
         context['key'] = key
         context['key_src'] = f'https://s3-{dataset.source_region}.amazonaws.com/{bucket}/{encoded_key}'
 
     return render(request, "process.html", context)
 
 
-def show_dataset(request, **kwargs):
+def update_or_create_dataset(request, **kwargs):
     dataset_id = kwargs.get('dataset')
     datasets = Dataset.objects.filter(id=dataset_id)
     dataset = datasets.first()
 
-    if not dataset.is_user_authorised_to_process(request.user):
-        messages.error(request, 'You\'re not authorized to view this dataset =(')
+    if dataset and not dataset.is_user_authorised_admin(request.user):
+        messages.error(request, 'You\'re not authorized to edit this dataset =(')
         return redirect('index')
 
-    is_user_authorised_to_export = dataset.is_user_authorised_to_export(request.user)
-    context = {'dataset': annotate_datasets_for_view(datasets).first(),
-               'is_user_authorised_to_export': is_user_authorised_to_export}
-    return render(request, "show_dataset.html", context)
+    if request.method == "POST":
+        form = DatasetForm(request.POST, instance=dataset)
+        if form.is_valid():
+            dataset = form.save(commit=False)
+            dataset.user = request.user
+
+            if request.POST.get('submit') == 'save_and_fetch':
+                dataset.fetch_keys_from_source()
+                return redirect('process', dataset=dataset.pk)
+            else:
+                dataset.save()
+                return redirect('index')
+    else:
+        form = DatasetForm(instance=dataset)
+        dataset = annotate_datasets_for_view(datasets, request.user).first()
+
+    return render(request, "create_dataset.html",
+                  {'form': form, 'dataset': dataset,
+                   'is_edit': dataset_id is not None})
+
+
+def fetch_dataset_from_source(request, **kwargs):
+    dataset_id = kwargs.get('dataset')
+    dataset = Dataset.objects.filter(id=dataset_id).first()
+
+    if dataset.is_user_authorised_admin(request.user):
+        dataset.fetch_keys_from_source()
+        messages.success(request, 'Dataset updated successfully! 🎉')
+        return redirect('update_or_create_dataset', dataset=dataset_id)
+    else:
+        messages.error(request, 'You\'re not authorized to edit this dataset =(')
+        return redirect('index')
 
 
 def export_dataset(request, **kwargs):
@@ -82,11 +117,15 @@ def export_dataset(request, **kwargs):
     dataset_id = kwargs.get('dataset')
     dataset = Dataset.objects.filter(id=dataset_id).first()
 
-    if not dataset.is_user_authorised_to_export(user):
+    if not dataset.is_user_authorised_admin(user):
         messages.error(request, 'You\'re not authorized to export this dataset =(')
         return redirect('index')
 
     queryset = Label.objects.filter(dataset=dataset)
+    if not queryset.exists():
+        messages.info(request, 'There are no labels for this dataset yet. Start processing first')
+        return redirect('index')
+
     with tempfile.NamedTemporaryFile() as f:
         ExportModel.as_csv(f.name, queryset)
         response = HttpResponse(f.read(), content_type='text/csv')
@@ -107,6 +146,6 @@ def index_dataset(request, **kwargs):
     else:
         datasets = []
 
-    context['datasets'] = annotate_datasets_for_view(datasets)
+    context['datasets'] = annotate_datasets_for_view(datasets, user)
 
     return render(request, "datasets.html", context)

@@ -1,0 +1,16 @@
+<div class="container row">
+    <div class="col-12 btn-group btn-group-vertical" role="group"></div>
+    {% if dataset.is_user_authorised_admin %}
+    <a href="{% url 'process' dataset.id %}" role="button"
+       class="btn btn-info">Start 🚀</a>
+    <a href="{% url 'export_dataset' dataset.id %}" role="button"
+       class="btn btn-outline-info ">Export 📦</a>
+    <a href="{% url 'fetch_dataset' dataset.id %}" role="button"
+       class="btn btn-outline-info">Fetch data ↩️</a>
+    <a href="{% url 'update_or_create_dataset' dataset.id %}" role="button"
+       class="btn btn-outline-info">Details 🔍</a>
+    {% elif dataset.is_user_authorised_to_contribute %}
+    <a href="{% url 'process' dataset.id %}" role="button"
+       class="btn btn-info">Start 🚀</a>
+    {% endif %}
+</div>
