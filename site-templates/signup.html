@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load bootstrap4 %}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery='tiny' %}
+{% bootstrap_messages %}
+{% block head %}
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('.has-popover').popover({'trigger':'hover'});
+    });
+</script>
+{% endblock %}
+{% block content %}
+<br />
+<h2>Sign up</h2>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-9">
+            <form method="post" class="form">
+                {% csrf_token %}
+                {% bootstrap_form form layout='inline' %}
+                <button type="submit" class="btn btn-success">Sign up</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

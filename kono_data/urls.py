@@ -16,18 +16,22 @@ Including another URLconf
 from django.conf.urls import url
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, reverse_lazy
 from django.views.generic import RedirectView
 from django.contrib.auth.views import login, logout
 
 from kono_data import settings
-from kono_data.views import IndexView, process, index_dataset, export_dataset, update_or_create_dataset, \
+from kono_data.views.dataset import index_dataset, export_dataset, update_or_create_dataset, \
     fetch_dataset_from_source
+from kono_data.views.process import process
+from kono_data.views.user import signup
+from kono_data.views.views import IndexView
 
 urlpatterns = [
                   url(r'^accounts/logout/$', logout, name='logout'),
+                  url(r'^accounts/signup/$', signup, name='signup'),
                   url(r'^accounts/login/$', login, {'template_name': 'admin/login.html'}, name='login'),
-                  url(r'^accounts/profile/$', RedirectView.as_view(url='/')),
+                  url(r'^accounts/profile/$', RedirectView.as_view(url=reverse_lazy('index'))),
                   url(r'^accounts/$', RedirectView.as_view(url='/')),
                   url(r'^admin_tools/', include('admin_tools.urls')),
                   path('admin/', admin.site.urls),

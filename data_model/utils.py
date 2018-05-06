@@ -1,10 +1,12 @@
-from typing import Optional
+from typing import Optional, List
 
 from django.contrib.auth.models import User
 from django.contrib.postgres.aggregates import BitOr
 from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.db.models import ExpressionWrapper, F, Count, QuerySet, FloatField, Q, When, BooleanField, Case
 from django.db.models.functions import Cast, Greatest
+
+from data_model.models import Dataset
 
 
 def annotate_datasets_for_view(datasets: QuerySet, user: Optional[User] = None):
@@ -35,3 +37,17 @@ def annotate_datasets_for_view(datasets: QuerySet, user: Optional[User] = None):
             annotated_fields += ['is_user_authorised_admin', 'is_user_authorised_to_contribute']
 
     return annotated.values(*annotated_fields)
+
+
+def get_unprocessed_keys(user: User, dataset: Dataset, n: int) -> List:
+    if user.is_anonymous:
+        return dataset.source_keys[:n]
+
+    labels = user.labels.values_list('key', flat=True)
+    unprocessed_keys = set(dataset.source_keys) - set(labels)
+    return list(unprocessed_keys)[:n]
+
+
+def get_unprocessed_key(user: User, dataset: Dataset):
+    unprocessed_keys = get_unprocessed_keys(user, dataset, n=1)
+    return unprocessed_keys[0] if unprocessed_keys else None

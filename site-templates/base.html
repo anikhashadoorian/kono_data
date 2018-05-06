@@ -15,7 +15,7 @@
 <main role="main" class="container">
     {% block content %}{% endblock %}
 </main>
-<br /><br /><br />
+<br/><br/><br/>
 <nav class="navbar fixed-bottom navbar-expand-sm navbar-dark bg-dark">
     <a class="navbar-brand" href="#">kono data</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
@@ -35,6 +35,9 @@
             </li>
             <li class="nav-item">
                 <a class="nav-link" href="{% url 'login' %}">Login</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'signup' %}">Sign up</a>
             </li>
             {% else %}
             <li class="nav-item dropup">

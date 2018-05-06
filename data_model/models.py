@@ -1,13 +1,14 @@
 import logging
 import uuid
-from typing import List
 
-import boto3, botocore
+import boto3
 from botocore.exceptions import ClientError, ParamValidationError
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import JSONField, ArrayField
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils import timezone
 
 from data_model.enums import AwsRegionType, LabelingApproachEnum
@@ -133,15 +134,15 @@ class Label(models.Model):
     data = JSONField()
 
 
-def get_unprocessed_keys(user: User, dataset: Dataset, n: int) -> List:
-    if user.is_anonymous:
-        return dataset.source_keys[:n]
-
-    labels = user.labels.values_list('key', flat=True)
-    unprocessed_keys = set(dataset.source_keys) - set(labels)
-    return list(unprocessed_keys)[:n]
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    bio = models.TextField(max_length=500, blank=True)
+    location = models.CharField(max_length=30, blank=True)
+    email = models.EmailField(max_length=254, blank=False, null=False)
 
 
-def get_unprocessed_key(user: User, dataset: Dataset):
-    unprocessed_keys = get_unprocessed_keys(user, dataset, n=1)
-    return unprocessed_keys[0] if unprocessed_keys else None
+@receiver(post_save, sender=User)
+def update_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+    instance.profile.save()
