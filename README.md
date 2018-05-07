@@ -16,11 +16,11 @@ On the left side you see an image and on the right its possible labels.
 Click the checkbox or type the number and a label is selected.
 One or all labels can be selected. If you click _Save_ or hit enter your input is saved for this image and the next one in the dataset is loaded.
 
-<img src="docs/img/label_hotdog.png" alt="" style="height: 200px;" />
+<img src="docs/img/label_hotdog.png" alt="" style="height:200px;" />
 
 ## How can I see the labeling progress of a dataset?
 ## How can I export a dataset?
-<img src="docs/img/export_hotdog.png" alt="" style="height: 200px;" />
+<img src="docs/img/export_hotdog.png" alt="" style="height:200px;" />
 
 ## [FAQ](FAQ.md)
   
