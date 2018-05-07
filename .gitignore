@@ -1,5 +1,5 @@
 kono_data/dev_settings.py
-/kono_data/prod_settings.py
+kono_data/prod_settings.py
 static/*
 zappa_settings.json
 zappa_deploy.sh
