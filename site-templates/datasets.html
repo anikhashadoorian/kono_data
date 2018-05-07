@@ -2,7 +2,7 @@
 
 {% block content %}
 <br/>
-<h2>{{ type }} datasets</h2>
+<h2>{{ type|title }} datasets</h2>
 {% if datasets %}
 <div class="row">
     {% for dataset in datasets %}
