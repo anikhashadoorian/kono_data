@@ -2,3 +2,7 @@ kono_data/dev_settings.py
 static/*
 zappa_settings.json
 zappa_deploy.sh
+.DS_Store
+__pycache__/
+env/
+.idea/
