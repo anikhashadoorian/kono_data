@@ -21,12 +21,16 @@ One or all labels can be selected. If you click _Save_ or hit enter your input i
 ## How can I see the labeling progress of a dataset?
 ## How can I export a dataset?
 <img src="docs/img/export_hotdog.png" alt="" style="height: 200px;" />
+
 ## [FAQ](FAQ.md)
+  
 ## Installation
 This app is written in Python 3 and based on [Django](https://www.djangoproject.com/).
 Python requirements are listed in the ```requirements.txt``` and can be installed with ```pip install --upgrade -r requirements.txt```. 
 
 ## Contribute
+You're encourage to contribute to kono data! 
+There are several ways to expand the project, you can fix a bug, translate content or work on new features. Your ideas are welcome, if you need a start several bugs and future features are listed below. If you have questions open an issue on [Github](https://github.com/hellno/KonoData/issues) and we can discuss. A few questions and common problems are answered in the [FAQ](FAQ.md).
 
 ## Bugs
 - progress bar does not start in the beginning of the bar =/
