@@ -130,7 +130,7 @@ class Label(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='labels')
     dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE, related_name='labels')
-    key = models.CharField(max_length=64)
+    key = models.CharField(max_length=128)
     data = JSONField()
 
 
