@@ -1,13 +1,45 @@
 {% extends "base.html" %}
 
 {% block content %}
-<br />
-<h2>Public datasets</h2>
+<br/>
+<h1>kono data</h1>
+<h2>public datasets</h2>
 <div class="row">
-    {% for dataset in datasets %}
-    <div class="container col-md-9">
-        {% include "partials/dataset.html" with dataset=dataset %}
+    <div class="col-md-6">
+        {% for dataset in datasets %}
+        <div class="container col-md-9">
+            {% include "partials/dataset.html" with dataset=dataset %}
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
+    <div class="col-md-6">
+        <h4>
+            <p>Read more on
+                <a class="btn btn-outline-info btn-sm"
+                   href="https://medium.com/@holger_no/from-idea-to-open-source-in-12-days-cef016e3f919">
+                    Medium
+                </a>
+            </p>
+            <hr />
+            <p>Contribute on
+                <a class="btn btn-outline-dark btn-sm" href="https://github.com/hellno/kono_data">
+                    GitHub
+                </a>
+            </p>
+            <hr />
+            <p>Start
+                <a href="
+                {% if user.is_anonymous %}
+                {% url 'signup' %}
+                {% else %}
+                {% url 'update_or_create_dataset' %}
+                {% endif %}"
+                   class="btn btn-outline-success btn-sm">
+                    HERE
+                </a>
+                to label your own dataset
+            </p>
+        </h4>
+    </div>
 </div>
 {% endblock %}
