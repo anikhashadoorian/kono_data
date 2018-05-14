@@ -1,4 +1,4 @@
-kono data
+kono data [![Build Status](https://travis-ci.com/hellno/kono_data.svg?branch=master)](https://travis-ci.com/hellno/kono_data) 
 ===========
 > a simple label-it-yourself app - for more structure in your data
 
