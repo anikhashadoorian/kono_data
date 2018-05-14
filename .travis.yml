@@ -16,6 +16,7 @@ before_script:
   - psql -c 'create database travis_ci_test;' -U postgres
 script:
   - python manage.py makemigrations --dry-run
+  - python manage.py migrate
   - coverage run manage.py test
 after_success:
   - coverage report
