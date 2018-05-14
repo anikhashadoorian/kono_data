@@ -11,7 +11,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
 
-from data_model.enums import AwsRegionType, LabelingApproachEnum
+from data_model.enums import AwsRegionType, LabelingApproachEnum, TaskType
 from kono_data.const import S3_ARN_PREFIX
 from kono_data.utils import get_s3_bucket_from_str
 
@@ -34,6 +34,10 @@ class Dataset(models.Model):
     is_public = models.BooleanField(default=False)
     title = models.CharField(max_length=140, blank=False, null=False, help_text='Give your dataset a descriptive title')
     description = models.TextField(max_length=1000, help_text='Additional information about your dataset')
+    task_type = models.CharField(choices=TaskType.choices(),
+                                 default=TaskType.single_image_label,
+                                 max_length=128,
+                                 help_text='Task Type: label a single image or compare two images')
     labeling_approach = models.CharField(choices=LabelingApproachEnum.choices(),
                                          default=LabelingApproachEnum.width_first,
                                          max_length=128,
@@ -45,8 +49,7 @@ class Dataset(models.Model):
                                                           help_text='How many labels should be saved for each key')
     possible_labels = ArrayField(
         models.CharField(max_length=128, blank=False),
-        help_text='Give a comma-separated list of the labels in your dataset. Example: "hotdog, not hotdog"'
-    )
+        help_text='Give a comma-separated list of the labels in your dataset. Example: "hotdog, not hotdog"')
     source_data = JSONField(default=dict,
                             help_text='Keys in your dataset, will be automatically fetched and overwritten each time you save.')
     admins = models.ManyToManyField(User, related_name='admin_datasets', blank=True)

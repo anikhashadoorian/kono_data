@@ -5,7 +5,7 @@ from django.shortcuts import redirect, render
 
 from data_model.models import Dataset, Label
 from data_model.utils import get_unprocessed_key
-from kono_data.forms import ProcessForm
+from kono_data.process_forms import SingleImageLabelForm, task_type_to_process_form
 from kono_data.utils import get_s3_bucket_from_str
 
 
@@ -20,7 +20,8 @@ def process(request, **kwargs):
         messages.error(request, 'You\'re not authorized to process this dataset =(')
         return redirect('index')
 
-    form = ProcessForm(request.POST or None, labels=dataset.possible_labels)
+    form_class = task_type_to_process_form(dataset.task_type)
+    form = form_class(request.POST or None, labels=dataset.possible_labels)
 
     if form.is_valid():
         if user.is_anonymous:
