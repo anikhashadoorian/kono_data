@@ -163,5 +163,7 @@ SITE_ID = 1
 
 if os.environ.get('ENV') == 'PROD':
     from kono_data.prod_settings import *
+elif os.environ.get('ENV') == 'TEST':
+    from kono_data.test_settings import *
 else:
     from kono_data.dev_settings import *

@@ -36,10 +36,9 @@ def update_or_create_dataset(request, **kwargs):
     else:
         form = DatasetForm(instance=dataset)
         dataset = annotate_datasets_for_view(datasets, request.user).first()
-
-    return render(request, "create_dataset.html",
-                  {'form': form, 'dataset': dataset,
-                   'is_edit': dataset_id is not None})
+    context = {'form': form, 'dataset': dataset,
+               'is_edit': dataset_id is not None}
+    return render(request, "create_dataset.html", context)
 
 
 def fetch_dataset_from_source(request, **kwargs):
