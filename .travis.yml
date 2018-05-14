@@ -5,6 +5,8 @@ services:
   - postgresql
 addons:
   postgresql: "9.6"
+  apt:
+      update: true
 cache:
   directories:
     - $HOME/.cache/pip
@@ -16,7 +18,6 @@ install:
 before_script:
   - export DJANGO_SETTINGS_MODULE=kono_data.settings
   - psql -c 'create database travis_ci_test;' -U postgres
-  - cat config/database.yml.travis
 script:
   - python manage.py makemigrations --dry-run
   - python manage.py migrate
