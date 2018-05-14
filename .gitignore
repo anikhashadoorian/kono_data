@@ -7,3 +7,4 @@ zappa_deploy.sh
 __pycache__/
 env/
 .idea/
+.coverage
