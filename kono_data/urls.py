@@ -25,7 +25,7 @@ from kono_data.views.dataset import index_dataset, export_dataset, update_or_cre
     fetch_dataset_from_source
 from kono_data.views.process import process
 from kono_data.views.user import signup
-from kono_data.views.views import IndexView
+from kono_data.views.index import IndexView
 
 urlpatterns = [
                   url(r'^accounts/logout/$', logout, name='logout'),

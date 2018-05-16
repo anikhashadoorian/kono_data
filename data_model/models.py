@@ -13,7 +13,7 @@ from django.utils import timezone
 
 from data_model.enums import AwsRegionType, LabelingApproachEnum, TaskType
 from kono_data.const import S3_ARN_PREFIX
-from kono_data.utils import get_s3_bucket_from_str
+from kono_data.utils import get_s3_bucket_from_str, generate_comparison_tasks_from_keys
 
 logger = logging.getLogger(__name__)
 
@@ -95,13 +95,18 @@ class Dataset(models.Model):
                 logger.info('received %s keys from bucket %s', len(contents), bucket_name)
 
         self.source_data['keys'] = keys
+        if self.task_type == TaskType.two_image_comparison.value:
+            tasks = generate_comparison_tasks_from_keys(keys)
+        else:
+            tasks = keys
+        self.source_data['tasks'] = tasks
         self.source_data['nr_keys'] = len(keys)
         self.source_data['last_fetch'] = timezone.now().isoformat()
         self.save()
 
     @property
-    def source_keys(self):
-        return self.source_data['keys']
+    def tasks(self):
+        return self.source_data['tasks']
 
     @property
     def is_done(self) -> bool:
@@ -109,7 +114,7 @@ class Dataset(models.Model):
 
     @property
     def nr_required_labels(self) -> int:
-        return len(self.source_keys) * self.min_labels_per_key
+        return len(self.tasks) * self.min_labels_per_key
 
     def is_user_authorised_to_contribute(self, user: User) -> bool:
         if self.is_public:
@@ -131,9 +136,11 @@ class Label(models.Model):
     class Meta:
         db_table = 'Label'
 
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='labels')
     dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE, related_name='labels')
-    key = models.CharField(max_length=128)
+    task = models.CharField(max_length=128)
     data = JSONField()
 
 

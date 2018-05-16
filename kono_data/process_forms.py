@@ -19,11 +19,12 @@ class SingleImageLabelForm(forms.Form):
 
 class TwoImageComparisonForm(forms.Form):
     def __init__(self, *args, **kwargs):
+        labels = kwargs.pop('labels')
         super(TwoImageComparisonForm, self).__init__(*args, **kwargs)
 
 
 task_type_to_process_form = {
-    TaskType.single_image_label: SingleImageLabelForm,
-    TaskType.two_image_comparison: TwoImageComparisonForm
+    TaskType.single_image_label.value: SingleImageLabelForm,
+    TaskType.two_image_comparison.value: TwoImageComparisonForm
 
 }
