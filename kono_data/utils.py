@@ -40,7 +40,8 @@ def process_form_data_for_tasktype(task, task_type, data):
         tasks = task.split(',')
         comparison_data = {}
         for k, v in data.items():
-            comparison_data[k] = tasks[1] if v else tasks[0]
+            if k != 'confirm':
+                comparison_data[k] = tasks[1] if v else tasks[0]
         return comparison_data
     else:
         UnknownTaskTypeException()
