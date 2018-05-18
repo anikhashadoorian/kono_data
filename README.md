@@ -44,7 +44,7 @@ These are some ideas I've been thinking about, going from most obvious to most f
 2. Make every label an object with label, title and description
 3. Export confidence ratio if multiple user labeled the same datapoint
 4. Add more content types: video, sound, gif
-5. Add comparison task with labels, e.g. "Which image has more people in it?"
+5. ~Add comparison task with labels, e.g. "Which image has more people in it?"~  First version of comparison task released 18.05.2018
 6. Train and export deep-learning model on click of a button
 
 ## Awesome, but why the weird name?
