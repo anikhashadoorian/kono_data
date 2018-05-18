@@ -3,15 +3,11 @@ from urllib.parse import quote
 from django.contrib import messages
 from django.shortcuts import redirect, render
 
-from data_model.enums import TaskType
+from data_model.enums import TaskType, UnknownTaskTypeException
 from data_model.models import Dataset, Label
 from data_model.utils import get_unprocessed_task
 from kono_data.process_forms import task_type_to_process_form
-from kono_data.utils import get_s3_bucket_from_str
-
-
-class UnknownTaskTypeException(Exception):
-    pass
+from kono_data.utils import get_s3_bucket_from_str, process_form_data_for_tasktype
 
 
 def process(request, **kwargs):
@@ -33,7 +29,8 @@ def process(request, **kwargs):
             messages.info(request, 'Sign up or Login to label this dataset')
         else:
             task = form.data.get('task')
-            Label.objects.create(user=user, dataset=dataset, task=task, data=form.cleaned_data)
+            processed_data = process_form_data_for_tasktype(task, dataset.task_type, form.cleaned_data)
+            Label.objects.create(user=user, dataset=dataset, task=task, data=processed_data)
         return redirect("process", dataset=dataset_id)
 
     context['form'] = form
@@ -56,11 +53,11 @@ def process(request, **kwargs):
             context['task'] = task
             context['task_source'] = f'https://s3-{dataset.source_region}.amazonaws.com/{bucket}/{encoded_task}'
         elif dataset.task_type == TaskType.two_image_comparison.value:
-            context['tasks'] = task
+            context['task'] = task
             context['task_sources'] = [f'https://s3-{dataset.source_region}.amazonaws.com/{bucket}/{quote(t)}'
-                                       for t in task]
+                                       for t in task.split(',')]
         else:
-            raise UnknownTaskTypeException
+            raise UnknownTaskTypeException()
 
     context['partial_name'] = 'partials/process_' + dataset.task_type + '.html'
     return render(request, "process.html", context)

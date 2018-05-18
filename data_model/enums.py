@@ -40,3 +40,7 @@ class AwsRegionType(ChoiceEnum):
 class LabelingApproachEnum(ChoiceEnum):
     width_first = 'width_first'
     depth_first = 'depth_first'
+
+
+class UnknownTaskTypeException(Exception):
+    pass
