@@ -7,6 +7,11 @@ class ChoiceEnum(Enum):
         return tuple((x.value, x.value) for x in cls)
 
 
+class TaskType(ChoiceEnum):
+    single_image_label = 'single_image_label'
+    two_image_comparison = 'two_image_comparison'
+
+
 class SourceType(ChoiceEnum):
     s3 = 's3'
 
@@ -35,3 +40,7 @@ class AwsRegionType(ChoiceEnum):
 class LabelingApproachEnum(ChoiceEnum):
     width_first = 'width_first'
     depth_first = 'depth_first'
+
+
+class UnknownTaskTypeException(Exception):
+    pass

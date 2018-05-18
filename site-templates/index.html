@@ -3,16 +3,9 @@
 {% block content %}
 <br/>
 <h1>kono data</h1>
-<h2>public datasets</h2>
 <div class="row">
-    <div class="col-md-6">
-        {% for dataset in datasets %}
-        <div class="container col-md-9">
-            {% include "partials/dataset.html" with dataset=dataset %}
-        </div>
-        {% endfor %}
-    </div>
-    <div class="col-md-6">
+    <div class="col-md-5">
+        <br/>
         <h4>
             <p>Read more on
                 <a class="btn btn-outline-info btn-sm"
@@ -20,13 +13,13 @@
                     Medium
                 </a>
             </p>
-            <hr />
+            <hr/>
             <p>Contribute on
                 <a class="btn btn-outline-dark btn-sm" href="https://github.com/hellno/kono_data">
                     GitHub
                 </a>
             </p>
-            <hr />
+            <hr/>
             <p>Start
                 <a href="
                 {% if user.is_anonymous %}
@@ -39,7 +32,16 @@
                 </a>
                 to label your own dataset
             </p>
+            <hr/>
         </h4>
+    </div>
+    <div class="col-md-7">
+        <h2>{% if user.is_anonymous %}Public {% else %} Your {% endif %}datasets</h2>
+        {% for dataset in datasets %}
+        <div class="container col-md-9">
+            {% include "partials/dataset.html" with dataset=dataset %}
+        </div>
+        {% endfor %}
     </div>
 </div>
 {% endblock %}

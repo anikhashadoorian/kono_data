@@ -39,15 +39,15 @@ def annotate_datasets_for_view(datasets: QuerySet, user: Optional[User] = None):
     return annotated.values(*annotated_fields)
 
 
-def get_unprocessed_keys(user: User, dataset: Dataset, n: int) -> List:
+def get_unprocessed_tasks(user: User, dataset: Dataset, n: int) -> List:
     if user.is_anonymous:
-        return dataset.source_keys[:n]
+        return dataset.tasks[:n]
 
-    labels = user.labels.values_list('key', flat=True)
-    unprocessed_keys = set(dataset.source_keys) - set(labels)
-    return list(unprocessed_keys)[:n]
+    processed_tasks = user.labels.filter(dataset=dataset).values_list('task', flat=True)
+    unprocessed_tasks = [task for task in dataset.tasks if task not in processed_tasks]
+    return list(unprocessed_tasks)[:n]
 
 
-def get_unprocessed_key(user: User, dataset: Dataset):
-    unprocessed_keys = get_unprocessed_keys(user, dataset, n=1)
-    return unprocessed_keys[0] if unprocessed_keys else None
+def get_unprocessed_task(user: User, dataset: Dataset):
+    unprocessed_tasks = get_unprocessed_tasks(user, dataset, n=1)
+    return unprocessed_tasks[0] if unprocessed_tasks else None

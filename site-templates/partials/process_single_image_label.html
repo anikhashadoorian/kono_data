@@ -1,0 +1,57 @@
+{% block head %}
+{% load bootstrap4 %}
+{% bootstrap_css %}
+{% bootstrap_javascript jquery='tiny' %}
+{% bootstrap_messages %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('html').keypress(function(event) {
+            var keycode = (event.keyCode ? event.keyCode : event.which);
+            if ((keycode >= 48) & (keycode <= 57)) {
+                handle_keypress(this, keycode, "click");
+            }
+            event.stopPropagation();
+        });
+
+        $('html').keydown(function(event) {
+            if (event.keyCode == 13) {
+                this.querySelector('.form').submit();
+                return false;
+             }
+        });
+    });
+
+    function handle_keypress(element, keycode, myEvent){
+        var input_number = keycode - 48;
+        var element = $(element.querySelector('#label_select_' + input_number))[0];
+        if(element.checked)
+            element.checked = false;
+        else
+            element.checked = true;
+    }
+
+
+    $(document).ready(function() {
+
+    });
+</script>
+{% endblock %}
+{% block process %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12 col-md-6">
+            <img src="{{ task_source }}" class="img-thumbnail media img-responsive" alt="Responsive image"/>
+        </div>
+        <div class="col-sm-12 col-md-6 col-1-offset">
+            <div>
+                <form action="{% url 'process' dataset.id %}" method="post" class="form">
+                    {% csrf_token %}
+                    {% bootstrap_form form layout='inline' %}
+                    <input type="hidden" name="task" value="{{ task }}"/>
+                    <button type="submit" class="btn btn-success">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
