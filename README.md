@@ -7,7 +7,7 @@ _kono data_ provides an easy way to label unstructured datasets.
 If have a folder of images, it helps you assign each file one or more labels. 
 
 ## How can I use it?
-You can use the hosted version ([HERE](https://61traccl80.execute-api.eu-west-1.amazonaws.com/prod/dataset/public)) or install it on your own server, see <b>Installation</b>.
+You can use the hosted version ([HERE](https://highlight.runningco.de/)) or install it on your own server, see <b>Installation</b>.
 
 You provide Kono Data with a path to your dataset (currently only AWS S3 is supported) and possible labels for each datapoint.
 
