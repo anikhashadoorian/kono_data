@@ -50,8 +50,9 @@ class Dataset(models.Model):
     possible_labels = ArrayField(
         models.CharField(max_length=128, blank=False),
         help_text='Give a comma-separated list of the labels in your dataset. Example: "hotdog, not hotdog"')
-    source_data = JSONField(default=dict,
-                            help_text='Keys in your dataset, will be automatically fetched and overwritten each time you save.')
+    keys = ArrayField(models.CharField(max_length=256), null=True, blank=True)
+    tasks = ArrayField(models.CharField(max_length=256), blank=True, null=True)
+    source_data = JSONField(default=dict, help_text='Keys in your dataset, will be automatically fetched and overwritten each time you save.')
     admins = models.ManyToManyField(User, related_name='admin_datasets', blank=True)
     contributors = models.ManyToManyField(User, related_name='contributor_datasets', blank=True)
 
@@ -77,7 +78,7 @@ class Dataset(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.source_data:
-            self.source_data = {'keys': [], 'nr_keys': 0, 'last_fetch': ''}
+            self.source_data = {'nr_keys': 0, 'last_fetch': ''}
         super(Dataset, self).save(*args, **kwargs)
 
     def fetch_keys_from_source(self):
@@ -94,19 +95,15 @@ class Dataset(models.Model):
                 keys += list(map(lambda obj: obj['Key'], contents))
                 logger.info('received %s keys from bucket %s', len(contents), bucket_name)
 
-        self.source_data['keys'] = keys
+        self.keys = keys
         if self.task_type == TaskType.two_image_comparison.value:
             tasks = generate_comparison_tasks_from_keys(keys)
         else:
             tasks = keys
-        self.source_data['tasks'] = tasks
+        self.tasks = tasks
         self.source_data['nr_keys'] = len(keys)
         self.source_data['last_fetch'] = timezone.now().isoformat()
         self.save()
-
-    @property
-    def tasks(self):
-        return self.source_data['tasks']
 
     @property
     def is_done(self) -> bool:

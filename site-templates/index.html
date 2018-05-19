@@ -38,7 +38,7 @@
     <div class="col-md-7">
         <h2>{% if user.is_anonymous %}Public {% else %} Your {% endif %}datasets</h2>
         {% for dataset in datasets %}
-        <div class="container col-md-9">
+        <div class="container col-md-12">
             {% include "partials/dataset.html" with dataset=dataset %}
         </div>
         {% endfor %}

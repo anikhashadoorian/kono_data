@@ -14,7 +14,7 @@ def get_s3_bucket_from_str(arn: str) -> Optional[str]:
         return arn
 
 
-def generate_comparison_tasks_from_keys(keys, ratio=0.5) -> List[Tuple[str, str]]:
+def generate_comparison_tasks_from_keys(keys, ratio=0.01, max_nr_tasks=10000) -> List[Tuple[str, str]]:
     """
     :param keys: list of keys to be compared to each other
     :param ratio: ratio of comparison tasks to be opened for each key to all others.
@@ -22,8 +22,8 @@ def generate_comparison_tasks_from_keys(keys, ratio=0.5) -> List[Tuple[str, str]
     :return: list of tasks = list of tuples of two keys
     """
     all_possible_combinations = list(combinations(keys, 2))
-    nr_tasks = int(len(all_possible_combinations) * ratio)
-    tasks = sample(all_possible_combinations, nr_tasks)
+    nr_tasks = min(len(all_possible_combinations) * ratio, max_nr_tasks)
+    tasks = sample(all_possible_combinations, int(nr_tasks))
     tasks_as_str = [f'{k1},{k2}' for k1, k2 in tasks]
     return tasks_as_str
 

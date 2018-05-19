@@ -86,7 +86,7 @@ def index_dataset(request, **kwargs):
         datasets = Dataset.objects.filter(Q(is_public=False) &
                                           (Q(user=user) | Q(admins__id=user.id) | Q(contributors__id=user.id)))
     else:
-        datasets = []
+        datasets = Dataset.objects.none()
 
     context['datasets'] = annotate_datasets_for_view(datasets, user)
 
