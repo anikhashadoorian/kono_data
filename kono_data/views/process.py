@@ -3,7 +3,7 @@ from urllib.parse import quote
 from django.contrib import messages
 from django.shortcuts import redirect, render
 
-from data_model.enums import TaskType, UnknownTaskTypeException
+from data_model.enums import TaskType, UnknownTaskTypeException, LabelActionType
 from data_model.models import Dataset, Label
 from data_model.utils import get_unprocessed_task
 from kono_data.process_forms import task_type_to_process_form
@@ -29,8 +29,13 @@ def process(request, **kwargs):
             messages.info(request, 'Sign up or Login to label this dataset')
         else:
             task = form.data.get('task')
-            processed_data = process_form_data_for_tasktype(task, dataset.task_type, form.cleaned_data)
-            Label.objects.create(user=user, dataset=dataset, task=task, data=processed_data)
+            if LabelActionType.skip.value in request.POST:
+                Label.objects.create(user=user, dataset=dataset, task=task, data={},
+                                     action=LabelActionType.solve.skip.value)
+            else:
+                processed_data = process_form_data_for_tasktype(task, dataset.task_type, form.cleaned_data)
+                Label.objects.create(user=user, dataset=dataset, task=task, data=processed_data,
+                                     action=LabelActionType.solve.value)
         return redirect("process", dataset=dataset_id)
 
     context['form'] = form

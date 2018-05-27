@@ -43,11 +43,10 @@ class TwoImageComparisonForm(forms.Form):
                    'data-on': 'confirm', 'data-off': 'not confirmed',
                    'data-onstyle': 'success', 'data-offstyle': 'danger',
                    'onchange': "validate_save_button()"})
-        self.fields['confirm'] = forms.BooleanField(label=label_str, required=True, initial=False, widget=widget)
+        self.fields['confirm'] = forms.BooleanField(label=label_str, required=False, initial=False, widget=widget)
 
 
 task_type_to_process_form = {
     TaskType.single_image_label.value: SingleImageLabelForm,
     TaskType.two_image_comparison.value: TwoImageComparisonForm
-
 }
