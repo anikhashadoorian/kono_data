@@ -71,30 +71,28 @@
 <div class="container-fluid">
     <div class="row">
         {% for task_source in task_sources %}
-            {% if forloop.first %}
-            <div class="col-sm-10 col-md-4">
-                <img src="{{ task_source }}" class="img-thumbnail img-rounded media img-responsive" alt="image"/>
-            </div>
-            {% endif %}
-        {% endfor %}
-        <div class="col-sm-10 col-md-4">
-            <h4>Which image is more...?</h4>
-            <div class="col-md-12">
-                <form action="{% url 'process' dataset.id %}" method="post" class="form">
-                    {% csrf_token %}
-                    {% bootstrap_form form %}
-                    <input type="hidden" name="task" value="{{ task }}"/>
-                    <button type="submit" class="btn btn-success">Save</button>
-                </form>
+        <div class="col-sm-12 col-md-6">
+            <div class="{% if forloop.first %}bg-info float-right{%else%}bg-warning float-left{% endif %}">
+                <span class="badge badge-pill text-center">Image {{ forloop.counter }}</span>
+                <img src="{{ task_source }}"
+                     class="border-{% if forloop.first %}info{%else%}warning{% endif %}
+                     border-info border img-thumbnail img-rounded media img-responsive"
+                     alt="image{{ forloop.counter }}"/>
+
             </div>
         </div>
-        {% for task_source in task_sources %}
-            {% if forloop.last %}
-            <div class="col-sm-10 col-md-4">
-                <img src="{{ task_source }}" class="img-thumbnail img-rounded media img-responsive" alt="image"/>
-            </div>
-            {% endif %}
         {% endfor %}
+    </div>
+    <div class="row justify-content-center">
+        <h4>Which image is more...?</h4>
+        <div class="row justify-content-center col-md-12">
+            <form action="{% url 'process' dataset.id %}" method="post" class="form">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                <input type="hidden" name="task" value="{{ task }}"/>
+                <button type="submit" class="btn btn-success">Save</button>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock %}
