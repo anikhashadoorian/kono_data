@@ -25,12 +25,12 @@ class TwoImageComparisonForm(forms.Form):
 
     def generate_fields_for_labels(self, labels):
         for i, label in enumerate(labels):
-            label_str = f'{i+1}: {label}' if i < 10 else label
+            label_str = f'{label} (Key: {i+1})' if i < 10 else label
             widget = forms.CheckboxInput(
                 attrs={'accesskey': str(i + 1), 'id': f'label_select_{i+1}',
                        'type': 'checkbox', 'class': 'checkbox', 'data-toggle': 'toggle',
-                       'data-on': 'right',
-                       'data-off': 'left'})
+                       'data-off': 'Image 1', 'data-on': 'Image 2',
+                       'data-onstyle': 'warning', 'data-offstyle': 'info'})
             self.fields[label] = forms.BooleanField(label=label_str, required=False, initial=False, widget=widget)
         self.add_confirmation_checkbox()
 

@@ -122,7 +122,7 @@ class Dataset(models.Model):
             return self.user == user or user.admin_datasets.filter(id=self.id).exists() \
                    or user.contributor_datasets.filter(id=self.id).exists()
 
-    def is_user_authorised_admin(self, user: User) -> bool:
+    def is_user_authorised_admitask_type_to_process_formn(self, user: User) -> bool:
         if user.is_anonymous:
             return False
         else:
