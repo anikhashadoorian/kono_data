@@ -11,7 +11,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
 
-from data_model.enums import AwsRegionType, LabelingApproachEnum, TaskType
+from data_model.enums import AwsRegionType, LabelingApproachEnum, TaskType, LabelActionType
 from kono_data.const import S3_ARN_PREFIX
 from kono_data.utils import get_s3_bucket_from_str, generate_comparison_tasks_from_keys
 
@@ -52,7 +52,8 @@ class Dataset(models.Model):
         help_text='Give a comma-separated list of the labels in your dataset. Example: "hotdog, not hotdog"')
     keys = ArrayField(models.CharField(max_length=256), null=True, blank=True)
     tasks = ArrayField(models.CharField(max_length=256), blank=True, null=True)
-    source_data = JSONField(default=dict, help_text='Keys in your dataset, will be automatically fetched and overwritten each time you save.')
+    source_data = JSONField(default=dict,
+                            help_text='Keys in your dataset, will be automatically fetched and overwritten each time you save.')
     admins = models.ManyToManyField(User, related_name='admin_datasets', blank=True)
     contributors = models.ManyToManyField(User, related_name='contributor_datasets', blank=True)
 
@@ -139,6 +140,7 @@ class Label(models.Model):
     dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE, related_name='labels')
     task = models.CharField(max_length=128)
     data = JSONField()
+    action = models.CharField(choices=LabelActionType.choices(), max_length=64)
 
 
 class Profile(models.Model):

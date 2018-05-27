@@ -20,7 +20,7 @@
     border: thin rgba(0, 0, 0, .25) solid;
     }
     .img-responsive {
-    width: 350px;
+    width: 400px;
     height: auto;
     }
 
@@ -37,7 +37,8 @@
         });
 
         $('html').keydown(function(event) {
-            var button_field = document.querySelector('button');
+            var button_field = document.querySelector('button[value=submit]');
+            console.log(button_field)
             if ((event.keyCode == 13)  && (!button_field.disabled)){
                 this.querySelector('.form').submit();
                 return false;
@@ -55,7 +56,7 @@
 
     function validate_save_button(){
         var validation_field = $('#label_select_0');
-        var button_field = document.querySelector('button');
+        var button_field = document.querySelector("button[value=submit]");
         if(validation_field.prop('checked') == button_field.disabled){
             button_field.disabled = !validation_field.prop('checked');
         }
@@ -90,7 +91,8 @@
                 {% csrf_token %}
                 {% bootstrap_form form %}
                 <input type="hidden" name="task" value="{{ task }}"/>
-                <button type="submit" class="btn btn-success">Save</button>
+                <button type="submit" name="submit" class="btn btn-success" value="submit">Save</button>
+                <button type="skip" name="skip" class="btn btn-secondary" value="skip">Skip</button>
             </form>
         </div>
     </div>

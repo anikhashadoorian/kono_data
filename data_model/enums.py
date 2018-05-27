@@ -12,6 +12,11 @@ class TaskType(ChoiceEnum):
     two_image_comparison = 'two_image_comparison'
 
 
+class LabelActionType(ChoiceEnum):
+    solve = 'solve'
+    skip = 'skip'
+
+
 class SourceType(ChoiceEnum):
     s3 = 's3'
 
