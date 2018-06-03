@@ -23,7 +23,6 @@
     width: 400px;
     height: auto;
     }
-
 </style>
 <script type="text/javascript">
     $(document).ready(function(){
@@ -38,7 +37,6 @@
 
         $('html').keydown(function(event) {
             var button_field = document.querySelector('button[value=submit]');
-            console.log(button_field)
             if ((event.keyCode == 13)  && (!button_field.disabled)){
                 this.querySelector('.form').submit();
                 return false;
@@ -91,8 +89,8 @@
                 {% csrf_token %}
                 {% bootstrap_form form %}
                 <input type="hidden" name="task" value="{{ task }}"/>
-                <button type="submit" name="submit" class="btn btn-success" value="submit">Save</button>
-                <button type="skip" name="skip" class="btn btn-secondary" value="skip">Skip</button>
+                <button type="button" name="save" class="btn btn-success" value="submit">Save</button>
+                <button type="button" name="skip" class="btn btn-secondary" value="skip">Skip</button>
             </form>
         </div>
     </div>
