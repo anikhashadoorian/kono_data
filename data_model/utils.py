@@ -39,6 +39,17 @@ def annotate_datasets_for_view(datasets: QuerySet, user: Optional[User] = None):
     return annotated.values(*annotated_fields)
 
 
+def annotate_dataset_for_view(dataset: Dataset, user: User):
+    dataset.nr_source_keys = dataset.source_data.get('nr_keys', 1)
+    dataset.nr_labels = dataset.labels.count()
+    if user.is_anonymous:
+        dataset.is_user_authorised_to_contribute = dataset.is_public
+    else:
+        dataset.is_user_authorised_to_contribute = user in dataset.users
+        dataset.is_user_authorised_admin = user == dataset.user or user in dataset.admins
+    return dataset
+
+
 def get_unprocessed_tasks(user: User, dataset: Dataset, n: int) -> List:
     if user.is_anonymous:
         return dataset.tasks[:n]

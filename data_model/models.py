@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib.postgres.fields import JSONField, ArrayField
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Q, F, Count
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
@@ -25,7 +26,7 @@ class Dataset(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='owner_datasets')
     source_uri = models.CharField(blank=False, null=False, max_length=128)
     source_region = models.CharField(choices=AwsRegionType.choices(),
                                      default=AwsRegionType.eu_west_1,
@@ -128,6 +129,14 @@ class Dataset(models.Model):
             return False
         else:
             return self.user == user or user.admin_datasets.filter(id=self.id).exists()
+
+    @property
+    def users(self):
+        return User.objects.filter(Q(contributor_datasets=self) | Q(admin_datasets=self) | Q(owner_datasets=self))
+
+    def get_leaderboard_users(self):
+        return self.users.annotate(nr_labels=Count('labels', filter=Q(labels__dataset=self))
+                                   ).filter(nr_labels__gt=0).order_by('nr_labels')
 
 
 class Label(models.Model):

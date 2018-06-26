@@ -22,7 +22,7 @@ from django.contrib.auth.views import login, logout
 
 from kono_data import settings
 from kono_data.views.dataset import index_dataset, export_dataset, update_or_create_dataset, \
-    fetch_dataset_from_source
+    fetch_dataset_from_source, show_leaderboard
 from kono_data.views.process import process
 from kono_data.views.user import signup
 from kono_data.views.index import IndexView
@@ -41,6 +41,7 @@ urlpatterns = [
                   path('dataset/<uuid:dataset>', update_or_create_dataset, name='update_or_create_dataset'),
                   path('dataset/<uuid:dataset>/export', export_dataset, name='export_dataset'),
                   path('dataset/<uuid:dataset>/fetch', fetch_dataset_from_source, name='fetch_dataset'),
+                  path('dataset/<uuid:dataset>/leaderboard', show_leaderboard, name='show_leaderboard'),
                   path('dataset/<str:type>', index_dataset, name='datasets'),
               ] + static(settings.STATIC_URL,
                          document_root=settings.STATIC_ROOT)
