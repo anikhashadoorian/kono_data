@@ -1,7 +1,6 @@
 from typing import Optional, List
 
 from django.contrib.auth.models import User
-from django.contrib.postgres.aggregates import BitOr
 from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.db.models import ExpressionWrapper, F, Count, QuerySet, FloatField, Q, When, BooleanField, Case
 from django.db.models.functions import Cast, Greatest
