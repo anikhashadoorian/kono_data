@@ -161,6 +161,9 @@ ADMIN_TOOLS_APP_INDEX_DASHBOARD = 'kono_data.dashboard.CustomAppIndexDashboard'
 
 SITE_ID = 1
 
+# view settings
+NR_USERS_IN_LEADERBOARD = 10
+
 if os.environ.get('ENV') == 'PROD':
     from kono_data.prod_settings import *
 elif os.environ.get('ENV') == 'TEST':

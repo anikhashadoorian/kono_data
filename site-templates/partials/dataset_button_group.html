@@ -13,4 +13,8 @@
     <a href="{% url 'process' dataset.id %}" role="button"
        class="btn btn-info">Start 🚀</a>
     {% endif %}
+    {% if not hide_leaderboard_link %}
+    <a href="{% url 'show_leaderboard' dataset.id %}" role="button"
+       class="btn btn-outline-info">Leaderboard 👾</a>
+    {% endif %}
 </div>

@@ -1,7 +1,6 @@
 from typing import Optional, List
 
 from django.contrib.auth.models import User
-from django.contrib.postgres.aggregates import BitOr
 from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.db.models import ExpressionWrapper, F, Count, QuerySet, FloatField, Q, When, BooleanField, Case
 from django.db.models.functions import Cast, Greatest
@@ -37,6 +36,17 @@ def annotate_datasets_for_view(datasets: QuerySet, user: Optional[User] = None):
             annotated_fields += ['is_user_authorised_admin', 'is_user_authorised_to_contribute']
 
     return annotated.values(*annotated_fields)
+
+
+def annotate_dataset_for_view(dataset: Dataset, user: User):
+    dataset.nr_source_keys = dataset.source_data.get('nr_keys', 1)
+    dataset.nr_labels = dataset.labels.count()
+    if user.is_anonymous:
+        dataset.is_user_authorised_to_contribute = dataset.is_public
+    else:
+        dataset.is_user_authorised_to_contribute = user in dataset.users
+        dataset.is_user_authorised_admin = user == dataset.user or user in dataset.admins
+    return dataset
 
 
 def get_unprocessed_tasks(user: User, dataset: Dataset, n: int) -> List:

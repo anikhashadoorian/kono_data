@@ -10,6 +10,7 @@
             <div class="col-12">{{ dataset.description }}</div>
         </div>
         <br/>
+        {% if dataset.processed_percentage %}
         <div class="row col-md-12">
             <div class="progress col-md-12">
                 <div class="progress-bar
@@ -23,6 +24,7 @@
             </div>
         </div>
         <br/>
+        {% endif %}
         <div class="row">
             <div class="col-3">Keys: {{ dataset.nr_source_keys|floatformat:"0" }}</div>
             <div class="col-6">Required labels per Key: {{ dataset.min_labels_per_key }}</div>
@@ -30,7 +32,7 @@
     </div>
     <div class="col-md-3">
         <div class="row ">
-            {% include "partials/dataset_button_group.html" %}
+            {% include "partials/dataset_button_group.html" with hide_leaderboard_link=hide_leaderboard_link %}
         </div>
 
     </div>
