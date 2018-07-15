@@ -30,7 +30,9 @@ from kono_data.views.index import IndexView
 urlpatterns = [
                   url(r'^accounts/logout/$', logout, name='logout'),
                   url(r'^accounts/signup/$', signup, name='signup'),
-                  url(r'^accounts/login/$', login, {'template_name': 'admin/login.html'}, name='login'),
+                  path('signup/<str:invite_key>', signup, name='signup_with_invite'),
+                  path('accounts/login/', login, {'template_name': 'admin/login.html'}, name='login'),
+                  path('accounts/login/<str:invite_key>', login, {'template_name': 'admin/login.html'}, name='login'),
                   url(r'^accounts/profile/$', RedirectView.as_view(url=reverse_lazy('index'))),
                   url(r'^accounts/$', RedirectView.as_view(url='/')),
                   url(r'^admin_tools/', include('admin_tools.urls')),
@@ -43,5 +45,4 @@ urlpatterns = [
                   path('dataset/<uuid:dataset>/fetch', fetch_dataset_from_source, name='fetch_dataset'),
                   path('dataset/<uuid:dataset>/leaderboard', show_leaderboard, name='show_leaderboard'),
                   path('dataset/<str:type>', index_dataset, name='datasets'),
-              ] + static(settings.STATIC_URL,
-                         document_root=settings.STATIC_ROOT)
+              ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

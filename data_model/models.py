@@ -10,9 +10,11 @@ from django.db import models
 from django.db.models import Q, Count
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.urls import reverse
 from django.utils import timezone
 
 from data_model.enums import AwsRegionType, LabelingApproachEnum, TaskType, LabelActionType
+from data_model.model_utils import generate_invite_key
 from kono_data.const import S3_ARN_PREFIX
 from kono_data.utils import get_s3_bucket_from_str, generate_comparison_tasks_from_keys
 
@@ -57,6 +59,7 @@ class Dataset(models.Model):
                             help_text='Keys in your dataset, will be automatically fetched and overwritten each time you save.')
     admins = models.ManyToManyField(User, related_name='admin_datasets', blank=True)
     contributors = models.ManyToManyField(User, related_name='contributor_datasets', blank=True)
+    invite_key = models.CharField(max_length=128, null=True)
 
     def __str__(self):
         return f'{self.title} - {self.source_region}'
@@ -81,6 +84,9 @@ class Dataset(models.Model):
     def save(self, *args, **kwargs):
         if not self.source_data:
             self.source_data = {'nr_keys': 0, 'last_fetch': ''}
+        if not self.invite_key:
+            self.invite_key = generate_invite_key(self)
+
         super(Dataset, self).save(*args, **kwargs)
 
     def fetch_keys_from_source(self):
@@ -137,6 +143,10 @@ class Dataset(models.Model):
     def get_leaderboard_users(self):
         return self.users.annotate(nr_labels=Count('labels', filter=Q(labels__dataset=self))
                                    ).filter(nr_labels__gt=0).order_by('nr_labels')
+
+    @property
+    def invite_link(self):
+        return reverse('signup_with_invite', args=[str(self.invite_key)])
 
 
 class Label(models.Model):

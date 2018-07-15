@@ -1,10 +1,14 @@
-from django.contrib.auth import authenticate, login
+import warnings
+
+from account.views import LoginView
+from django.contrib.auth import authenticate, login, REDIRECT_FIELD_NAME
+from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import redirect, render
 
 from kono_data.forms import SignUpForm
 
 
-def signup(request):
+def signup(request, **kwargs):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
@@ -23,3 +27,16 @@ def signup(request):
     else:
         form = SignUpForm()
     return render(request, 'signup.html', {'form': form})
+
+
+def login(request, template_name='registration/login.html',
+          redirect_field_name=REDIRECT_FIELD_NAME,
+          authentication_form=AuthenticationForm,
+          extra_context=None, redirect_authenticated_user=False, **kwargs):
+    return LoginView.as_view(
+        template_name=template_name,
+        redirect_field_name=redirect_field_name,
+        form_class=authentication_form,
+        extra_context=extra_context,
+        redirect_authenticated_user=redirect_authenticated_user,
+    )(request)

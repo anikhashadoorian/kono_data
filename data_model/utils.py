@@ -8,7 +8,7 @@ from django.db.models.functions import Cast, Greatest
 from data_model.models import Dataset
 
 
-def annotate_datasets_for_view(datasets: QuerySet, user: Optional[User] = None):
+def annotate_datasets_for_view(datasets: QuerySet, user: Optional[User] = None, n: int = None):
     annotated = datasets.annotate(
         nr_source_keys=Greatest(Cast(KeyTextTransform('nr_keys', 'source_data'), FloatField()), 1.0),
         nr_labels=Greatest(Count('labels'), 0.0))
@@ -17,6 +17,7 @@ def annotate_datasets_for_view(datasets: QuerySet, user: Optional[User] = None):
                                                Cast(F('min_labels_per_key'), FloatField()) /
                                                F('nr_source_keys'),
                                                output_field=FloatField()))
+
     annotated_fields = ['id', 'title', 'description', 'nr_labels', 'nr_source_keys',
                         'labeling_approach', 'min_labels_per_key', 'processed_percentage']
     if user:
@@ -34,6 +35,10 @@ def annotate_datasets_for_view(datasets: QuerySet, user: Optional[User] = None):
                                                            then=True),
                                                       default=False, output_field=BooleanField()))
             annotated_fields += ['is_user_authorised_admin', 'is_user_authorised_to_contribute']
+
+    if n:
+        annotated.order_by('-created_at')
+        return annotated.values(*annotated_fields)[:n]
 
     return annotated.values(*annotated_fields)
 
