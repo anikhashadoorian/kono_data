@@ -1,7 +1,5 @@
-import warnings
-
 from account.views import LoginView
-from django.contrib.auth import authenticate, login, REDIRECT_FIELD_NAME
+from django.contrib.auth import authenticate, REDIRECT_FIELD_NAME
 from django.contrib.auth.forms import AuthenticationForm
 from django.shortcuts import redirect, render
 
