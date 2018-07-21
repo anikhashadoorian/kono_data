@@ -56,7 +56,6 @@ class SignUpForm(UserCreationForm):
         super(SignUpForm, self).__init__(*args, **kwargs)
         for field in self.fields:
             help_text = self.fields[field].help_text
-            print(help_text)
             label = self.fields[field].label or str(field)
             if help_text != '':
                 self.fields[field].widget.attrs.update(

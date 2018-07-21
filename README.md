@@ -4,7 +4,8 @@ kono data [![Build Status](https://travis-ci.com/hellno/kono_data.svg?branch=mas
 
 ## Why do I need it?
 _kono data_ provides an easy way to label unstructured datasets.
-If have a folder of images, it helps you assign each file one or more labels. 
+It helps you assign labels to images or compare two images.
+You can work on a dataset with a group of other people or by yourself.
 
 ## How can I use it?
 You can use the hosted version ([kono-data.runningco.de](https://kono-data.runningco.de/)) or install it on your own server, see <b>Installation</b>.
@@ -40,7 +41,7 @@ There are several ways to expand the project: you can fix a bug, translate conte
 ## Future features
 These are some ideas I've been thinking about, going from most obvious to most far-fetched:
 
-1. Add gamification with leaderboards in each dataset and across the whole site
+1. ~Add gamification with leaderboards in each dataset~ and across the whole site
 2. Make every label an object with label, title and description
 3. Export confidence ratio if multiple user labeled the same datapoint
 4. Add more content types: video, sound, gif

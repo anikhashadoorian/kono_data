@@ -50,7 +50,7 @@ def annotate_dataset_for_view(dataset: Dataset, user: User):
         dataset.is_user_authorised_to_contribute = dataset.is_public
     else:
         dataset.is_user_authorised_to_contribute = user in dataset.users
-        dataset.is_user_authorised_admin = user == dataset.user or user in dataset.admins
+        dataset.is_user_authorised_admin = user == dataset.user or user in dataset.admins.all()
     return dataset
 
 
