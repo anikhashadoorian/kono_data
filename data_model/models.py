@@ -75,7 +75,7 @@ class Dataset(models.Model):
             # If it was a 404 error, then the bucket does not exist.
             error_code = int(e.response['Error']['Code'])
             if error_code == 403:
-                raise ValidationError('Private S3 bucket. Can\'t access keys to label')
+                raise ValidationError('Private S3 bucket. Can\'t access data')
             elif error_code == 404:
                 raise ValidationError('Could not find S3 bucket %s' % self.source_uri)
         except ParamValidationError as e:

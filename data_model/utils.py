@@ -66,3 +66,9 @@ def get_unprocessed_tasks(user: User, dataset: Dataset, n: int) -> List:
 def get_unprocessed_task(user: User, dataset: Dataset):
     unprocessed_tasks = get_unprocessed_tasks(user, dataset, n=1)
     return unprocessed_tasks[0] if unprocessed_tasks else None
+
+
+def get_dataset_from_invite_key(invite_key):
+    if not invite_key:
+        return None
+    return Dataset.objects.filter(invite_key=invite_key).first()
