@@ -18,19 +18,22 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include, reverse_lazy
 from django.views.generic import RedirectView
-from django.contrib.auth.views import login, logout
+from django.contrib.auth.views import logout
 
 from kono_data import settings
 from kono_data.views.dataset import index_dataset, export_dataset, update_or_create_dataset, \
     fetch_dataset_from_source, show_leaderboard
 from kono_data.views.process import process
-from kono_data.views.user import signup
+from kono_data.views.user import signup, login_url
 from kono_data.views.index import IndexView
 
 urlpatterns = [
-                  url(r'^accounts/logout/$', logout, name='logout'),
-                  url(r'^accounts/signup/$', signup, name='signup'),
-                  url(r'^accounts/login/$', login, {'template_name': 'admin/login.html'}, name='login'),
+                  path('accounts/logout/', logout, name='logout'),
+                  path('accounts/signup', signup, name='signup'),
+                  path('signup/<str:invite_key>', signup, name='signup_with_invite'),
+                  path('accounts/login/', login_url, {'template_name': 'admin/login.html'}, name='login'),
+                  path('accounts/login/<str:invite_key>', login_url, {'template_name': 'admin/login.html'},
+                       name='login_with_invite'),
                   url(r'^accounts/profile/$', RedirectView.as_view(url=reverse_lazy('index'))),
                   url(r'^accounts/$', RedirectView.as_view(url='/')),
                   url(r'^admin_tools/', include('admin_tools.urls')),
@@ -43,5 +46,4 @@ urlpatterns = [
                   path('dataset/<uuid:dataset>/fetch', fetch_dataset_from_source, name='fetch_dataset'),
                   path('dataset/<uuid:dataset>/leaderboard', show_leaderboard, name='show_leaderboard'),
                   path('dataset/<str:type>', index_dataset, name='datasets'),
-              ] + static(settings.STATIC_URL,
-                         document_root=settings.STATIC_ROOT)
+              ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

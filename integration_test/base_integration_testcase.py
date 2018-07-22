@@ -1,5 +1,5 @@
-from django.test import TestCase
+from kono_data.base_testcase import BaseTestCase
 
 
-class BaseIntegrationTestCase(TestCase):
+class BaseIntegrationTestCase(BaseTestCase):
     pass

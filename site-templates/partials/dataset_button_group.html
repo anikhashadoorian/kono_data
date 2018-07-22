@@ -5,10 +5,12 @@
        class="btn btn-info">Start 🚀</a>
     <a href="{% url 'export_dataset' dataset.id %}" role="button"
        class="btn btn-outline-info ">Export 📦</a>
-    <a href="{% url 'fetch_dataset' dataset.id %}" role="button"
+    <!-- <a href="{% url 'fetch_dataset' dataset.id %}" role="button"
        class="btn btn-outline-info">Fetch data ↩️</a>
+       -->
     <a href="{% url 'update_or_create_dataset' dataset.id %}" role="button"
        class="btn btn-outline-info">Details 🔍</a>
+    {% include "partials/invite_button_with_modal.html" with dataset=dataset %}
     {% elif dataset.is_user_authorised_to_contribute %}
     <a href="{% url 'process' dataset.id %}" role="button"
        class="btn btn-info">Start 🚀</a>
