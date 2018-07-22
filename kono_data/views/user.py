@@ -1,13 +1,8 @@
-import warnings
-
 from django.contrib import messages
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, REDIRECT_FIELD_NAME, login as auth_login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect, render
-from django.contrib.auth import (
-    REDIRECT_FIELD_NAME, login as auth_login,
-)
 from data_model.utils import get_dataset_from_invite_key, annotate_dataset_for_view
 from kono_data.forms import SignUpForm
 
