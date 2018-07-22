@@ -2,10 +2,14 @@
 {% block content %}
 
 <br/>
-<h1>kono data</h1>
 <div class="row">
     <div class="col-md-5">
+        <h1>kono data</h1>
         <br/>
+        <p>
+        <b>kono data provides an easy way to label unstructured datasets. </b><br/>
+        It helps you assign labels to images or compare two images.<br/>
+        You can work on a dataset with a group of other people or by yourself.</p>
         <h4>
             <p>Read more on
                 <a class="btn btn-outline-info btn-sm"
@@ -35,13 +39,16 @@
             <hr/>
         </h4>
     </div>
-    <div class="col-md-7">
-        <h2>{% if user.is_anonymous %}Public {% else %} Your {% endif %}datasets</h2>
-        {% for dataset in datasets %}
-        <div class="container col-md-12">
-            {% include "partials/dataset.html" with dataset=dataset %}
+    <div class="col-md-1"></div>
+    <div class="col-md-6">
+        <div class="row">
+            <h2>{% if user.is_anonymous %}Public {% else %} Your {% endif %}datasets</h2>
         </div>
-        {% endfor %}
+        <div class="row">
+            {% for dataset in datasets %}
+            {% include "partials/dataset.html" with dataset=dataset %}
+            {% endfor %}
+        </div>
     </div>
 </div>
 {% endblock %}
