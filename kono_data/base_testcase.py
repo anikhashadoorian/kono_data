@@ -25,21 +25,32 @@ class BaseTestCase(TestCase):
         return Dataset.objects.create(user=user, **kwargs)
 
     @classmethod
-    def generate_user(cls, is_super_user=False, username=None, **kwargs):
-        if not username:
-            username = str(uuid.uuid4())
+    def generate_user_form_data(cls) -> dict:
+        return {**cls.generate_user_data(),
+                **{'password1': 'bestpassword123',
+                   'password2': 'bestpassword123'}
+                }
 
-        add_to_dic_if_not_exist(kwargs, 'username', username)
-        add_to_dic_if_not_exist(kwargs, 'email', '{}@kono_data.com'.format(username))
-        add_to_dic_if_not_exist(kwargs, 'password', 'bestpassword123')
+    @classmethod
+    def generate_user_data(cls) -> dict:
+        username = '{}@konodata.com'.format(uuid.uuid4())
+        return {'username': username,
+                'email': username,
+                'password': 'bestpassword123',
+                'bio': 'Long long time ago..',
+                'location': 'Planet Earth'}
 
-        bio = kwargs.pop('bio', 'Long long time ago..')
-        location = kwargs.pop('location', 'Planet Earth')
+    @classmethod
+    def generate_user(cls, is_super_user=False, **kwargs) -> User:
+        user_data = cls.generate_user_data()
+        user_data.update(kwargs)
+        bio = user_data.pop('bio')
+        location = user_data.pop('location')
 
         if is_super_user:
-            user = User.objects.create_superuser(**kwargs)
+            user = User.objects.create_superuser(**user_data)
         else:
-            user = User.objects.create_user(**kwargs)
+            user = User.objects.create_user(**user_data)
 
         user.profile.bio = bio
         user.profile.location = location

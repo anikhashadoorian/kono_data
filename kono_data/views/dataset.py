@@ -10,7 +10,7 @@ from data_model.export_models import ExportModel
 from data_model.models import Dataset, Label
 from data_model.utils import annotate_datasets_for_view, annotate_dataset_for_view
 from kono_data.forms import DatasetForm
-from kono_data.settings import NR_USERS_IN_LEADERBOARD
+from kono_data.settings import USERS_VISIBLE_ON_LEADERBOARD
 
 
 def update_or_create_dataset(request, **kwargs):
@@ -97,6 +97,6 @@ def index_dataset(request, **kwargs):
 def show_leaderboard(request, **kwargs):
     dataset_id = kwargs.get('dataset')
     dataset = Dataset.objects.filter(id=dataset_id).first()
-    users = dataset.get_leaderboard_users()[:NR_USERS_IN_LEADERBOARD]
+    users = dataset.get_leaderboard_users()[:USERS_VISIBLE_ON_LEADERBOARD]
     context = {'dataset': annotate_dataset_for_view(dataset, request.user), 'users': users}
     return render(request, "leaderboard.html", context)

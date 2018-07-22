@@ -5,6 +5,7 @@ from django.views.generic import TemplateView
 
 from data_model.models import Dataset
 from data_model.utils import annotate_datasets_for_view
+from kono_data.settings import DATASETS_ON_INDEX_PAGE
 
 logger = logging.getLogger(__name__)
 
@@ -20,5 +21,5 @@ class IndexView(TemplateView):
             user = self.request.user
             datasets = Dataset.objects.filter(Q(is_public=True) |
                                               (Q(user=user) | Q(admins__id=user.id) | Q(contributors__id=user.id)))
-        context['datasets'] = annotate_datasets_for_view(datasets, context['view'].request.user)[:10]
+        context['datasets'] = annotate_datasets_for_view(datasets, context['view'].request.user, DATASETS_ON_INDEX_PAGE)
         return context

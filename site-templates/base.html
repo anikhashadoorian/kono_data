@@ -4,14 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>kono data</title>
+    {% load static %}
     {% load bootstrap4 %}
     {% bootstrap_css %}
     {% bootstrap_javascript jquery='tiny' %}
-    {% load static %}
     {% bootstrap_messages %}
     {% block head %}{% endblock %}
 </head>
 <body>
+<br />
 <main role="main" class="container">
     {% block content %}{% endblock %}
 </main>

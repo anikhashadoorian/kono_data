@@ -11,18 +11,39 @@
 </script>
 {% endblock %}
 {% block content %}
-<br />
-<h2>Sign up</h2>
-<h4>Already have an account? <a href="{% url 'login' %}">login here</a></h4>
-<br />
+<br/>
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-9">
+        <div class="col-md-6">
+            <h2>Sign up</h2>
+            <h4>Already have an account?
+                {% if invite_key %}
+                <a href="{% url 'login_with_invite' invite_key=invite_key %}">Login here</a>
+                {% else %}
+                <a href="{% url 'login' %}">Login here</a>
+                {% endif %}
+            </h4>
+            <br/>
             <form method="post" class="form">
                 {% csrf_token %}
                 {% bootstrap_form form layout='inline' %}
                 <button type="submit" class="btn btn-success">Sign up</button>
             </form>
+        </div>
+        <div class="col-md-6">
+            {% if dataset %}
+            <div>
+                {% include "partials/dataset.html" %}
+            </div>
+            {% endif %}
+            <div>
+                <h2>What is kono data?</h2>
+                <p>
+                    <b>kono data provides an easy way to label unstructured datasets. </b><br/>
+                    It helps you assign labels to images or compare two images.<br/>
+                    You can work on a dataset with a group of other people or by yourself.
+                </p>
+            </div>
         </div>
     </div>
 </div>

@@ -70,7 +70,7 @@ INSTALLED_APPS = [
     'storages',
     'bootstrap4',
     'account',
-    'data_model',
+    'data_model'
 ]
 
 MIDDLEWARE = [
@@ -87,6 +87,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'kono_data.urls'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_URL = '/static/'
 TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'site-templates/'), ]
 
 TEMPLATES = [
@@ -162,7 +163,8 @@ ADMIN_TOOLS_APP_INDEX_DASHBOARD = 'kono_data.dashboard.CustomAppIndexDashboard'
 SITE_ID = 1
 
 # view settings
-NR_USERS_IN_LEADERBOARD = 10
+USERS_VISIBLE_ON_LEADERBOARD = 10
+DATASETS_ON_INDEX_PAGE = 5
 
 if os.environ.get('ENV') == 'PROD':
     from kono_data.prod_settings import *
