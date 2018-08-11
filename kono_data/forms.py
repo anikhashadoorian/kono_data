@@ -12,7 +12,7 @@ from data_model.models import Dataset
 class DatasetForm(ModelForm):
     class Meta:
         model = Dataset
-        exclude = ['user', 'source_data', 'labeling_approach', 'admins', 'contributors']
+        exclude = ['user', 'source_data', 'labeling_approach', 'tasks', 'keys', 'admins', 'contributors', 'invite_key']
         labels = {
             'source_uri': 'AWS S3 Bucket',
         }
