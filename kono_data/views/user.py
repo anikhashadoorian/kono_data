@@ -9,8 +9,7 @@ from kono_data.forms import SignUpForm
 
 def signup(request, **kwargs):
     invite_key = kwargs.get('invite_key')
-    if invite_key:
-        dataset = get_dataset_from_invite_key(invite_key)
+    dataset = get_dataset_from_invite_key(invite_key) if invite_key else None
 
     if request.method == 'POST':
         form = SignUpForm(request.POST)
