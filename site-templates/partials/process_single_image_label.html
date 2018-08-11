@@ -2,38 +2,7 @@
 {% load bootstrap4 %}
 {% bootstrap_css %}
 {% bootstrap_javascript jquery='tiny' %}
-<script type="text/javascript">
-    $(document).ready(function(){
-        $('html').keypress(function(event) {
-            var keycode = (event.keyCode ? event.keyCode : event.which);
-            if ((keycode >= 48) & (keycode <= 57)) {
-                handle_keypress(this, keycode, "click");
-            }
-            event.stopPropagation();
-        });
-
-        $('html').keydown(function(event) {
-            if (event.keyCode == 13) {
-                this.querySelector('.form').submit();
-                return false;
-             }
-        });
-    });
-
-    function handle_keypress(element, keycode, myEvent){
-        var input_number = keycode - 48;
-        var element = $(element.querySelector('#label_select_' + input_number))[0];
-        if(element.checked)
-            element.checked = false;
-        else
-            element.checked = true;
-    }
-
-
-    $(document).ready(function() {
-
-    });
-</script>
+<script type="text/javascript" src="{% static 'data_model/js/process_single_image_label.js' %}"></script>
 {% endblock %}
 {% block process %}
 <div class="container-fluid">
@@ -47,7 +16,9 @@
                     {% csrf_token %}
                     {% bootstrap_form form layout='inline' %}
                     <input type="hidden" name="task" value="{{ task }}"/>
+                    <input type="hidden" name="processing-time" id="form-processing-time" />
                     <button type="submit" class="btn btn-success">Save</button>
+                    <button type="submit" name="skip" class="btn btn-secondary" value="skip">Skip</button>
                 </form>
             </div>
         </div>

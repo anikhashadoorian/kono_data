@@ -18,7 +18,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include, reverse_lazy
 from django.views.generic import RedirectView
-from django.contrib.auth.views import logout
+from django.contrib.auth.views import LogoutView
 
 from kono_data import settings
 from kono_data.views.dataset import index_dataset, export_dataset, update_or_create_dataset, \
@@ -28,7 +28,7 @@ from kono_data.views.user import signup, login_url
 from kono_data.views.index import IndexView
 
 urlpatterns = [
-                  path('accounts/logout/', logout, name='logout'),
+                  path('accounts/logout/', LogoutView.as_view(), name='logout'),
                   path('accounts/signup', signup, name='signup'),
                   path('signup/<str:invite_key>', signup, name='signup_with_invite'),
                   path('accounts/login/', login_url, {'template_name': 'admin/login.html'}, name='login'),

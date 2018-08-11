@@ -62,7 +62,7 @@ def get_unprocessed_tasks(user: User, dataset: Dataset, n: int) -> List:
         return dataset.tasks[:n]
 
     processed_tasks = user.labels.filter(dataset=dataset).values_list('task', flat=True)
-    unprocessed_tasks = [task for task in dataset.tasks if task not in processed_tasks]
+    unprocessed_tasks = set(dataset.tasks).difference(set(processed_tasks))
     return list(unprocessed_tasks)[:n]
 
 

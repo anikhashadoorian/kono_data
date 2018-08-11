@@ -62,4 +62,5 @@ class BaseTestCase(TestCase):
         add_to_dic_if_not_exist(kwargs, 'data', {})
         add_to_dic_if_not_exist(kwargs, 'action', LabelActionType.solve)
         add_to_dic_if_not_exist(kwargs, 'task', 'task')
+        add_to_dic_if_not_exist(kwargs, 'processing_time', 2342)
         return Label.objects.create(user=user, dataset=dataset, **kwargs)

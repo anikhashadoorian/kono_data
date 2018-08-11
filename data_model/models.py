@@ -160,6 +160,7 @@ class Label(models.Model):
     task = models.CharField(max_length=128)
     data = JSONField()
     action = models.CharField(choices=LabelActionType.choices(), max_length=64)
+    processing_time = models.IntegerField(null=False, blank=False)
 
 
 class Profile(models.Model):

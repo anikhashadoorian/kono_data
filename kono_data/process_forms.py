@@ -32,18 +32,6 @@ class TwoImageComparisonForm(forms.Form):
                        'data-off': 'Image 1', 'data-on': 'Image 2',
                        'data-onstyle': 'warning', 'data-offstyle': 'info'})
             self.fields[label] = forms.BooleanField(label=label_str, required=False, initial=False, widget=widget)
-        self.add_confirmation_checkbox()
-
-    def add_confirmation_checkbox(self):
-        index = 0
-        label_str = f'{index}: Confirm'
-        widget = forms.CheckboxInput(
-            attrs={'accesskey': str(index), 'id': f'label_select_{index}',
-                   'type': 'checkbox', 'class': 'checkbox', 'data-toggle': 'toggle',
-                   'data-on': 'confirm', 'data-off': 'not confirmed',
-                   'data-onstyle': 'success', 'data-offstyle': 'danger',
-                   'onchange': "validate_save_button()"})
-        self.fields['confirm'] = forms.BooleanField(label=label_str, required=False, initial=False, widget=widget)
 
 
 task_type_to_process_form = {
