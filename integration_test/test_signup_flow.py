@@ -6,8 +6,15 @@ from django.urls import reverse
 from integration_test.base_integration_testcase import BaseIntegrationTestCase
 
 
-class InviteFlowTestCase(BaseIntegrationTestCase):
-    def test_signup_withDatasetKey_userCreatedAndAddedAsContributorToDataset(self):
+class SignupFlowTestCase(BaseIntegrationTestCase):
+    def test_signup_noInviteKey_userCreated(self):
+        data = self.generate_user_form_data()
+        self.client.post(reverse("signup"), data)
+
+        user = User.objects.filter(username=data['username']).first()
+        self.assertIsNotNone(user)
+
+    def test_signup_withDatasetInviteKey_userCreatedAndAddedAsContributorToDataset(self):
         invite_key = 'invite_key'
         dataset = self.generate_dataset(invite_key=invite_key)
         data = self.generate_user_form_data()
