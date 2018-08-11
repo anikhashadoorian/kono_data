@@ -124,11 +124,11 @@ class Dataset(models.Model):
     def is_user_authorised_to_contribute(self, user: User) -> bool:
         if self.is_public:
             return True
-        elif user.is_anonymous:
+        if user.is_anonymous:
             return False
-        else:
-            return self.user == user or user.admin_datasets.filter(id=self.id).exists() \
-                   or user.contributor_datasets.filter(id=self.id).exists()
+
+        return self.user == user or user.admin_datasets.filter(id=self.id).exists() \
+               or user.contributor_datasets.filter(id=self.id).exists()
 
     def is_user_authorised_admin(self, user: User) -> bool:
         if user.is_anonymous:

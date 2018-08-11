@@ -1,4 +1,4 @@
-kono data [![Build Status](https://travis-ci.com/hellno/kono_data.svg?branch=master)](https://travis-ci.com/hellno/kono_data) 
+kono data [![Build Status](https://travis-ci.com/hellno/kono_data.svg?branch=master)](https://travis-ci.com/hellno/kono_data) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a370f21a0a2c42209a7ec2f4421cda7c)](https://www.codacy.com/project/holgerniessner/kono_data/dashboard)
 ===========
 > a simple label-it-yourself app - for more structure in your data
 
