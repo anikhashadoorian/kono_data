@@ -142,7 +142,7 @@ class Dataset(models.Model):
 
     def get_leaderboard_users(self):
         return self.users.annotate(nr_labels=Count('labels', filter=Q(labels__dataset=self))
-                                   ).filter(nr_labels__gt=0).order_by('nr_labels')
+                                   ).filter(nr_labels__gt=0).order_by('-nr_labels')
 
     @property
     def invite_link(self):
