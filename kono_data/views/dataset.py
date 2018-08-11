@@ -78,10 +78,10 @@ def export_dataset(request, **kwargs):
 
 def index_dataset(request, **kwargs):
     context = {}
-    type = kwargs.get('type')
-    context['type'] = type
+    dataset_type = kwargs.get('type')
+    context['type'] = dataset_type
     user = request.user
-    if type == 'public':
+    if dataset_type == 'public':
         datasets = Dataset.objects.filter(is_public=True)
     elif not user.is_anonymous:
         datasets = Dataset.objects.filter(Q(is_public=False) &

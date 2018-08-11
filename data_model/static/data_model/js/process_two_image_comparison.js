@@ -1,6 +1,6 @@
-function handle_keypress(element, keycode, myEvent){
-    var input_number = keycode - 48;
-    var element = "#label_select_" + input_number;
+function handleKeypress(element, keycode, myEvent){
+    var inputNumber = keycode - 48;
+    var element = "#label_select_" + inputNumber;
     var state = $(element).prop("checked");
     $(element).prop("checked", !state).change();
 }
@@ -9,14 +9,14 @@ $(document).ready(function(){
     $("html").keypress(function(event) {
         var keycode = (event.keyCode ? event.keyCode : event.which);
         if ((keycode >= 48) & (keycode <= 57)) {
-            handle_keypress(this, keycode, "click");
+            handleKeypress(this, keycode, "click");
         }
         event.stopPropagation();
     });
 
     $("html").keydown(function(event) {
-        var button_field = document.querySelector("button[value=submit]");
-        if ((event.keyCode === 13)  && (!button_field.disabled)){
+        var button = document.querySelector("button[value=submit]");
+        if ((event.keyCode === 13)  && (!button.disabled)){
             this.querySelector(".form").submit();
             return false;
          }

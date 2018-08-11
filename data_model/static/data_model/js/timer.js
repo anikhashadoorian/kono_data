@@ -2,7 +2,7 @@ var seconds = 0;
 
 function timerCallback() {
     seconds++;
-    var formProcessingTime = document.getElementById("form-processing-time")
+    var formProcessingTime = document.getElementById("form-processing-time");
     if (formProcessingTime){
         formProcessingTime.value = seconds;
     }
