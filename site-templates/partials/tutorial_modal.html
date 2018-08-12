@@ -1,0 +1,39 @@
+<div class="modal fade" id="tutorial-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Tutorial for {{dataset.title}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>
+                {% if dataset.task_type == "two_image_comparison" %}
+                Your task is to compare two images or animations with each other.
+                You can skip a task if you can't make a definite decision.
+                For example when you can't recognize an image or you think both images are equal.
+                {% elif dataset.task_type == "single_image_label" %}
+                Your task is to assign labels to an image or video.
+                Select as many labels as you want for an image.
+                You can skip a test if you can't make a definite decision.
+                For example no label fits the image or an image can't be recognised.
+                {% endif %}
+                </p>
+                <b>Dataset description:</b>
+                <p>{{ dataset.description }}</p>
+                <b>Shortcuts</b>
+                <p>There are a few simple shortcuts to solve a task faster. <br />
+                    Press Enter for saving a task. Press numbers (1-9) to toggle the labels.</p>
+                <b>Cheating</b>
+                <p>The "kono data" platform provides anti-cheat functionality.
+                    It applies algorithms to detect and remove users and their data, if illegal behaviour is detected.<br />
+                    Spamming the save button is the fastest way to get your account removed.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" data-dismiss="modal">Lets go</button>
+            </div>
+        </div>
+    </div>
+</div>
