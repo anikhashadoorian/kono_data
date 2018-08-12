@@ -7,11 +7,26 @@
 {% endblock %}
 
 {% block content %}
-<br/>
-<h2>Processing dataset: {{ dataset.title }}</h2>
-<br/>
-{% if task or tasks %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12 col-md-8">
+            <h3>{{ dataset.title }}</h3>
+            <br/>
+        </div>
+        <div class="col-sm-12 col-md-4">
+            <button type="button" class="btn btn-outline-info" data-toggle="modal"
+                    data-target="#tutorial-modal">
+                Tutorial
+            </button>
+            <a href="{% url 'show_leaderboard' dataset.id %}" role="button"
+               class="btn btn-outline-info">Leaderboard 👾</a>
+        </div>
+    </div>
+    <br/>
+</div>
+{% if task %}
 {% include partial_name with task=task form=form %}
+{% include "partials/tutorial_modal.html" %}
 {% else %}
 You've labeled the whole dataset, thank youuuuu!
 {% endif %}

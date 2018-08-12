@@ -1,4 +1,5 @@
 var seconds = 0;
+var timerId = null;
 
 function timerCallback() {
     seconds++;
@@ -8,8 +9,9 @@ function timerCallback() {
     }
 }
 
-var timerId = window.setInterval(
-    function() {
+$(window).bind("load", function() {
+    timerId = window.setInterval(function() {
         timerCallback();
-    }, 10
-);
+    }, 10);
+});
+

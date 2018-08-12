@@ -141,7 +141,9 @@ class Dataset(models.Model):
         return User.objects.filter(Q(contributor_datasets=self) | Q(admin_datasets=self) | Q(owner_datasets=self))
 
     def get_leaderboard_users(self):
-        return self.users.annotate(nr_labels=Count('labels', filter=Q(labels__dataset=self))
+        return self.users.annotate(nr_labels=Count('labels',
+                                                   filter=Q(labels__dataset=self,
+                                                            labels__action=LabelActionType.solve.value))
                                    ).filter(nr_labels__gt=0).order_by('-nr_labels')
 
     @property
