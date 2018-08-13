@@ -1,6 +1,7 @@
 from urllib.parse import quote
 
 from django.contrib import messages
+from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
 
 from data_model.enums import TaskType, UnknownTaskTypeException, LabelActionType
@@ -41,7 +42,7 @@ def process(request, **kwargs):
         return redirect("process", dataset=dataset_id)
 
     context['form'] = form
-    context['dataset'] = dataset
+
     if not dataset.tasks:
         if dataset.is_user_authorised_admin(user):
             messages.info(request, f'Dataset "{dataset}" has no tasks. Fetch new data to start processing')
@@ -51,20 +52,27 @@ def process(request, **kwargs):
                           f'Dataset "{dataset}" has no tasks. Ask your admin to fetch data to start processing')
             return redirect("index")
 
-    task = get_unprocessed_task(user, dataset)
-    bucket = get_s3_bucket_from_str(dataset.source_uri)
-    if task:
-        # TODO: change to function which adds to context dict depending on TaskType
-        if dataset.task_type == TaskType.single_image_label.value:
-            encoded_task = quote(task)
-            context['task'] = task
-            context['task_source'] = f'https://s3-{dataset.source_region}.amazonaws.com/{bucket}/{encoded_task}'
-        elif dataset.task_type == TaskType.two_image_comparison.value:
-            context['task'] = task
-            context['task_sources'] = [f'https://s3-{dataset.source_region}.amazonaws.com/{bucket}/{quote(t)}'
-                                       for t in task.split(',')]
-        else:
-            raise UnknownTaskTypeException()
-
-    context['partial_name'] = 'partials/process_' + dataset.task_type + '.html'
+    context.update(get_task_context_for_view(dataset, user))
     return render(request, "process.html", context)
+
+
+def get_task_context_for_view(dataset: Dataset, user: User):
+    task, is_first_task = get_unprocessed_task(user, dataset)
+    bucket = get_s3_bucket_from_str(dataset.source_uri)
+    if not task:
+        return
+
+    context = {'partial_name': 'partials/process_' + dataset.task_type + '.html', 'is_first_task': is_first_task,
+               'dataset': dataset}
+    if dataset.task_type == TaskType.single_image_label.value:
+        encoded_task = quote(task)
+        context['task'] = task
+        context['task_source'] = f'https://s3-{dataset.source_region}.amazonaws.com/{bucket}/{encoded_task}'
+    elif dataset.task_type == TaskType.two_image_comparison.value:
+        context['task'] = task
+        context['task_sources'] = [f'https://s3-{dataset.source_region}.amazonaws.com/{bucket}/{quote(t)}'
+                                   for t in task.split(',')]
+    else:
+        raise UnknownTaskTypeException()
+
+    return context

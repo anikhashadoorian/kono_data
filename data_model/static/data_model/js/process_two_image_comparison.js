@@ -23,15 +23,19 @@ $(document).ready(function(){
     });
 });
 
+var isLoaded = false;
 $(document).ready(function() {
-    var button_field = document.querySelector("button[value=submit]");
-    button_field.disabled = true;
+    var button = document.querySelector("button[value=submit]");
+    if(!isLoaded){
+        button.disabled = true;
+    }
 });
 
 
 
 $(window).bind("load", function() {
-    var button_field = document.querySelector("button[value=submit]");
-    button_field.disabled = false;
+    var button = document.querySelector("button[value=submit]");
+    button.disabled = false;
+    isLoaded = true;
 });
 

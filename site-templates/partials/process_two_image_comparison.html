@@ -9,6 +9,9 @@
 <script type="text/javascript" src="{% static 'data_model/js/process_two_image_comparison.js' %}"></script>
 {% endblock %}
 {% block process %}
+{% if is_first_task %}
+<script type="text/javascript" src="{% static 'data_model/js/show_modal_on_load.js' %}"></script>
+{% endif %}
 <div class="container-fluid">
     <div class="row">
         {% for task_source in task_sources %}
@@ -31,7 +34,7 @@
                 {% csrf_token %}
                 {% bootstrap_form form %}
                 <input type="hidden" name="task" value="{{ task }}"/>
-                <input type="hidden" name="processing-time" id="form-processing-time" />
+                <input type="hidden" name="processing-time" id="form-processing-time"/>
                 <button type="submit" name="save" class="btn btn-success" value="submit">Save</button>
                 <button type="submit" name="skip" class="btn btn-secondary" value="skip">Skip</button>
             </form>

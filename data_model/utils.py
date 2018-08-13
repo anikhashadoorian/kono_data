@@ -1,4 +1,4 @@
-from typing import Optional, List
+from typing import Optional, List, Tuple
 
 from django.contrib.auth.models import User
 from django.db.models import ExpressionWrapper, F, Count, QuerySet, FloatField, Q, When, BooleanField, Case
@@ -73,9 +73,11 @@ def get_unprocessed_tasks(user: User, dataset: Dataset, n: int) -> List:
     return list(unprocessed_tasks)[:n]
 
 
-def get_unprocessed_task(user: User, dataset: Dataset):
+def get_unprocessed_task(user: User, dataset: Dataset) -> Tuple[str, bool]:
     unprocessed_tasks = get_unprocessed_tasks(user, dataset, n=1)
-    return unprocessed_tasks[0] if unprocessed_tasks else None
+    unprocessed_task = unprocessed_tasks[0] if unprocessed_tasks else None
+    is_first_task = False if user.is_anonymous else not user.labels.filter(dataset=dataset).exists()
+    return unprocessed_task, is_first_task
 
 
 def get_dataset_from_invite_key(invite_key):
