@@ -1,24 +1,30 @@
 from typing import Optional, List
 
 from django.contrib.auth.models import User
-from django.contrib.postgres.fields.jsonb import KeyTextTransform
 from django.db.models import ExpressionWrapper, F, Count, QuerySet, FloatField, Q, When, BooleanField, Case
 from django.db.models.functions import Cast, Greatest
 
 from data_model.models import Dataset
 
+from django.db import models
+
+
+class ArrayLength(models.Func):
+    function = 'CARDINALITY'
+
 
 def annotate_datasets_for_view(datasets: QuerySet, user: Optional[User] = None, n: int = None):
-    annotated = datasets.annotate(
-        nr_source_keys=Greatest(Cast(KeyTextTransform('nr_keys', 'source_data'), FloatField()), 1.0),
-        nr_labels=Greatest(Count('labels'), 0.0))
-    annotated = annotated.annotate(
-        processed_percentage=ExpressionWrapper(100 * F('nr_labels') /
-                                               Cast(F('min_labels_per_key'), FloatField()) /
-                                               F('nr_source_keys'),
-                                               output_field=FloatField()))
+    annotated = datasets.annotate(nr_labels=Greatest(Count(F('labels')), 0.0),
+                                  nr_tasks=Greatest(ArrayLength('tasks'), 0.0))
 
-    annotated_fields = ['id', 'title', 'description', 'nr_labels', 'nr_source_keys',
+    annotated = annotated.annotate(processed_percentage=
+                                   ExpressionWrapper((100 * F('nr_labels')) /
+                                                     Cast(
+                                                         (F('nr_tasks') * F('min_labels_per_key'))
+                                                         , FloatField()),
+                                                     output_field=FloatField()))
+
+    annotated_fields = ['id', 'title', 'description', 'nr_labels', 'nr_tasks',
                         'labeling_approach', 'min_labels_per_key', 'processed_percentage']
     if user:
         if user.is_anonymous:
@@ -44,8 +50,9 @@ def annotate_datasets_for_view(datasets: QuerySet, user: Optional[User] = None, 
 
 
 def annotate_dataset_for_view(dataset: Dataset, user: User = None):
-    dataset.nr_source_keys = dataset.source_data.get('nr_keys', 1)
     dataset.nr_labels = dataset.labels.count()
+    dataset.nr_tasks = len(dataset.tasks)
+
     if not user:
         return dataset
 

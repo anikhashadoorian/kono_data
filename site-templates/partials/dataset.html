@@ -26,8 +26,8 @@
         <br/>
         {% endif %}
         <div class="row">
-            <div class="col-3">Keys: {{ dataset.nr_source_keys|floatformat:"0" }}</div>
-            <div class="col-6">Required labels per Key: {{ dataset.min_labels_per_key }}</div>
+            <div class="col-4">Tasks done: {{ dataset.nr_labels|floatformat:"0" }}</div>
+            <div class="col-4">All Tasks: {{ dataset.nr_tasks|floatformat:"0" }}</div>
         </div>
     </div>
     <div class="col-md-3">
