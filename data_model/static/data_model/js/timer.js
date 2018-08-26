@@ -3,10 +3,6 @@ var processingSeconds = 0;
 var timerId = null;
 var isLoaded = false;
 
-timerId = window.setInterval(function() {
-        timerCallback();
-        }, 10);
-
 function timerCallback() {
     if (!isLoaded){
         loadingSeconds++;
@@ -22,6 +18,10 @@ function timerCallback() {
         }
     }
 }
+
+timerId = window.setInterval(function() {
+            timerCallback();
+        }, 10);
 
 $(window).bind("load", function() {
     isLoaded = true;
