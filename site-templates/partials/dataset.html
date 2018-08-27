@@ -1,4 +1,5 @@
 {% block dataset %}
+{% load markdownify %}
 <div class="row">
     <div class="col-md-9">
         <div class="row">
@@ -7,7 +8,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-12">{{ dataset.description }}</div>
+            <div class="col-12">{{ dataset.description | markdownify }}</div>
         </div>
         <br/>
         {% if dataset.processed_percentage %}
