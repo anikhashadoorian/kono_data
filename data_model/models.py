@@ -12,6 +12,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
+from markdownx.models import MarkdownxField
 
 from data_model.enums import AwsRegionType, LabelingApproachEnum, TaskType, LabelActionType
 from data_model.model_utils import generate_invite_key
@@ -36,7 +37,7 @@ class Dataset(models.Model):
                                      help_text='Give the AWS region of the S3 bucket. Required to show the content')
     is_public = models.BooleanField(default=False)
     title = models.CharField(max_length=140, blank=False, null=False, help_text='Give your dataset a descriptive title')
-    description = models.TextField(max_length=1000, help_text='Additional information about your dataset')
+    description = MarkdownxField(help_text='Additional information about your dataset')
     task_type = models.CharField(choices=TaskType.choices(),
                                  default=TaskType.single_image_label,
                                  max_length=128,

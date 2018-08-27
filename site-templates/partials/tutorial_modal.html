@@ -21,7 +21,8 @@
                 {% endif %}
                 </p>
                 <b>Dataset description:</b>
-                <p>{{ dataset.description }}</p>
+                {% load markdownify %}
+                <p>{{ dataset.description | markdownify }}</p>
                 <b>Shortcuts</b>
                 <p>There are a few simple shortcuts to solve a task faster. <br />
                     Press Enter for saving a task. Press numbers (1-9) to toggle the labels.</p>
