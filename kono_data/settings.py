@@ -8,9 +8,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
-import os
-
 import logging.config
+import os
 
 LOGGING_CONFIG = None
 logging.config.dictConfig({
@@ -53,7 +52,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
-
 INSTALLED_APPS = [
     'prettyjson',
     'admin_tools',
@@ -69,6 +67,8 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'storages',
     'bootstrap4',
+    'markdownx',
+    'markdownify',
     'account',
     'data_model'
 ]
@@ -151,7 +151,6 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
@@ -163,6 +162,30 @@ ADMIN_TOOLS_APP_INDEX_DASHBOARD = 'kono_data.dashboard.CustomAppIndexDashboard'
 SITE_ID = 1
 
 # view settings
+MARKDOWNIFY_WHITELIST_TAGS = [
+    'a',
+    'abbr',
+    'acronym',
+    'b',
+    'blockquote',
+    'em',
+    'i',
+    'li',
+    'ol',
+    'p',
+    'strong',
+    'ul',
+    'h1',
+    'h2',
+    'h3'
+]
+
+MARKDOWNIFY_WHITELIST_ATTRS = [
+    'href',
+    'src',
+    'alt',
+]
+
 USERS_VISIBLE_ON_LEADERBOARD = 10
 DATASETS_ON_INDEX_PAGE = 5
 

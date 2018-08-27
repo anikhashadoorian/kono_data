@@ -16,16 +16,16 @@ Including another URLconf
 from django.conf.urls import url
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.auth.views import LogoutView
 from django.urls import path, include, reverse_lazy
 from django.views.generic import RedirectView
-from django.contrib.auth.views import LogoutView
 
 from kono_data import settings
 from kono_data.views.dataset import index_dataset, export_dataset, update_or_create_dataset, \
     fetch_dataset_from_source, show_leaderboard
+from kono_data.views.index import IndexView
 from kono_data.views.process import process
 from kono_data.views.user import signup, login_url
-from kono_data.views.index import IndexView
 
 urlpatterns = [
                   path('accounts/logout/', LogoutView.as_view(), name='logout'),
@@ -46,4 +46,5 @@ urlpatterns = [
                   path('dataset/<uuid:dataset>/fetch', fetch_dataset_from_source, name='fetch_dataset'),
                   path('dataset/<uuid:dataset>/leaderboard', show_leaderboard, name='show_leaderboard'),
                   path('dataset/<str:type>', index_dataset, name='datasets'),
+                  url(r'^markdownx/', include('markdownx.urls'))
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
