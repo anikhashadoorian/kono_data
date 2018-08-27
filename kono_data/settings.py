@@ -190,8 +190,8 @@ USERS_VISIBLE_ON_LEADERBOARD = 10
 DATASETS_ON_INDEX_PAGE = 5
 
 if os.environ.get('ENV') == 'PROD':
-    pass
+    from kono_data.prod_settings import *
 elif os.environ.get('ENV') == 'TEST':
-    pass
+    from kono_data.test_settings import *
 else:
-    pass
+    from kono_data.dev_settings import *
