@@ -30,14 +30,18 @@
     <div class="row justify-content-center">
         <h4>Which image is more...?</h4>
         <div class="row justify-content-center col-md-12">
-            <form action="{% url 'process' dataset.id %}" method="post" class="form">
+            <form action="{% url 'process' dataset.id %}" method="post" class="form" onsubmit="onSubmitProcessing()">
                 {% csrf_token %}
                 {% bootstrap_form form %}
                 <input type="hidden" name="task" value="{{ task }}"/>
                 <input type="hidden" name="processing-time" id="form-processing-time"/>
                 <input type="hidden" name="loading-time" id="form-loading-time"/>
-                <button type="submit" name="save" class="btn btn-success" value="submit">Save</button>
-                <button type="submit" name="skip" class="btn btn-secondary" value="skip">Skip</button>
+                <button type="submit" name="save" class="btn btn-success" value="submit">
+                    Save
+                </button>
+                <button type="submit" name="skip" class="btn btn-secondary" value="skip">
+                    Skip
+                </button>
             </form>
             {{ form.media }}
         </div>
