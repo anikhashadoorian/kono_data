@@ -1,29 +1,17 @@
-var loadingSeconds = 0;
-var processingSeconds = 0;
-var timerId = null;
-var isLoaded = false;
+function onSubmitProcessing() {
+    const performanceNavigation = performance.getEntriesByType("navigation")[0];
+    const loadRequestStartTime = performanceNavigation.requestStart;
+    const loadEventEndTime = performanceNavigation.loadEventEnd;
 
-function timerCallback() {
-    if (!isLoaded){
-        loadingSeconds++;
-        var fromLoadingTime = document.getElementById("form-loading-time");
-        if (fromLoadingTime){
-            fromLoadingTime.value = loadingSeconds;
-        }
-    } else {
-        processingSeconds++;
-        var formProcessingTime = document.getElementById("form-processing-time");
-        if (formProcessingTime){
-            formProcessingTime.value = processingSeconds;
-        }
+    const formLoadingTime =  loadEventEndTime - loadRequestStartTime;
+    const formProcessingTime = performance.now() - formLoadingTime;
+    var formLoadingTimeElement = document.getElementById("form-loading-time");
+    if (formLoadingTimeElement){
+        formLoadingTimeElement.value = formLoadingTime;
+    }
+
+    var formProcessingTimeElement = document.getElementById("form-processing-time");
+    if (formProcessingTimeElement){
+        formProcessingTimeElement.value = formProcessingTime;
     }
 }
-
-timerId = window.setInterval(function() {
-            timerCallback();
-        }, 10);
-
-$(window).bind("load", function() {
-    isLoaded = true;
-});
-

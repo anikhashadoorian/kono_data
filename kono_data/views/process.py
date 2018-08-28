@@ -30,8 +30,12 @@ def process(request, **kwargs):
             messages.info(request, 'Sign up or Login to label this dataset')
         else:
             task = form.data.get('task')
-            processing_time = form.data.get('processing-time', -1)
-            loading_time = form.data.get('loading-time', -1)
+            processing_time = form.data.get('processing-time')
+            loading_time = form.data.get('loading-time')
+            if not processing_time:
+                processing_time = -1
+            if not loading_time:
+                loading_time = -1
 
             is_skip_action = LabelActionType.skip.value in request.POST
             if is_skip_action:
@@ -40,6 +44,9 @@ def process(request, **kwargs):
             else:
                 data = process_form_data_for_tasktype(task, dataset.task_type, form.cleaned_data)
                 action = LabelActionType.solve.value
+            print('Creating label with action {} for user {} in dataset {} - times: load {} processing {}'.format(
+                action, user.id, dataset.id, loading_time, processing_time
+            ))
             Label.objects.create(data=data, action=action, user=user, dataset=dataset, task=task,
                                  processing_time=processing_time, loading_time=loading_time)
 
