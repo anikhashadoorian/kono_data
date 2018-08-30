@@ -48,7 +48,7 @@ def process(request, **kwargs):
                 action, user.id, dataset.id, loading_time, processing_time
             ))
             Label.objects.create(data=data, action=action, user=user, dataset=dataset, task=task,
-                                 processing_time=processing_time, loading_time=loading_time)
+                                 processing_time=int(processing_time), loading_time=int(loading_time))
 
         return redirect("process", dataset=dataset_id)
 
