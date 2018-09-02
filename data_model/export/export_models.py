@@ -58,8 +58,8 @@ class ProcessedExportModel:
         column_names = list(sum(label_field_tuples, ()))
 
         label_queryset = label_queryset.exclude(task__isnull=True).exclude(task='').annotate(
-            key1=Lower(Func(F('task'), Value(','), Value(1), function='split_part')),
-            key2=Lower(Func(F('task'), Value(','), Value(2), function='split_part')))
+            key1=Func(F('task'), Value(','), Value(1), function='split_part'),
+            key2=Func(F('task'), Value(','), Value(2), function='split_part'))
 
         unique_keys = set(label_queryset.values_list('key1', flat=True)
                           ).union(set(label_queryset.values_list('key2', flat=True)))

@@ -1,5 +1,5 @@
 from collections import namedtuple
-from typing import List, Dict
+from typing import Dict
 
 from trueskill import TrueSkill, rate_1vs1, Rating
 
@@ -18,7 +18,7 @@ def get_scores_from_queryset(queryset, keys, label_name, normalise=True) -> Dict
         scores = [kr.score for kr in key_to_rating_score_dict.values()]
         max_score, min_score = max(scores), min(scores)
         key_to_rating_score_dict = {key: rating._replace(normalised_score=
-                                                        normalise_value(rating.score, max_score, min_score))
+                                                         normalise_value(rating.score, max_score, min_score))
                                     for key, rating in key_to_rating_score_dict.items()}
 
     return key_to_rating_score_dict
@@ -32,7 +32,10 @@ def create_ratings_dict_from_queryset(queryset, keys, label_name, rating_env) ->
         if is_draw:
             key1, key2 = label.key1, label.key2
         else:
-            winner_key = label.data[label_name]
+            winner_key = label.data.get(label_name)
+            if not winner_key:
+                continue
+
             loser_key = label.key1 if label.key1 != winner_key else label.key2
             key1, key2 = winner_key, loser_key
 
