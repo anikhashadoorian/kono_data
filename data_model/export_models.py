@@ -33,7 +33,7 @@ class ExportModel(object):
                     except ValueError:
                         row[outdated_tasks_index][k] = v
 
-                row = list(map(lambda x: x if x != "" else False, row))
+                row = list(map(lambda x: x if x != "" else None, row))
                 writer.writerow(row)
             path = f.name
         return path
