@@ -66,7 +66,7 @@ class BaseTestCase(TestCase):
     @classmethod
     def generate_label(cls, user, dataset, **kwargs):
         add_to_dic_if_not_exist(kwargs, 'data', {})
-        add_to_dic_if_not_exist(kwargs, 'action', LabelActionType.solve.value)
+        add_to_dic_if_not_exist(kwargs, 'action', LabelActionType.solve)
         add_to_dic_if_not_exist(kwargs, 'task', 'task')
         add_to_dic_if_not_exist(kwargs, 'processing_time', 2342)
         add_to_dic_if_not_exist(kwargs, 'loading_time', 81)

@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.utils.text import slugify
 
-from data_model.export_models import ExportModel
+from data_model.export.export_models import RawExportModel, SUPPORTED_EXPORT_MODELS, ProcessedExportModel
 from data_model.models import Dataset, Label
 from data_model.utils import annotate_datasets_for_view, annotate_dataset_for_view
 from kono_data.forms import DatasetForm
@@ -58,8 +58,13 @@ def fetch_dataset_from_source(request, **kwargs):
 def export_dataset(request, **kwargs):
     user = request.user
     dataset_id = kwargs.get('dataset')
-    dataset = Dataset.objects.filter(id=dataset_id).first()
+    export_type = kwargs.get('export_type')
 
+    if export_type not in SUPPORTED_EXPORT_MODELS:
+        messages.info(request, f'Export type {export_type} is not supported for this dataset')
+        return redirect('index')
+
+    dataset = Dataset.objects.filter(id=dataset_id).first()
     if not dataset.is_user_authorised_admin(user):
         messages.error(request, 'You\'re not authorized to export this dataset =(')
         return redirect('index')
@@ -70,7 +75,11 @@ def export_dataset(request, **kwargs):
         return redirect('index')
 
     with tempfile.NamedTemporaryFile() as f:
-        ExportModel.as_csv(f.name, queryset)
+        if export_type == 'raw':
+            RawExportModel.as_csv(f.name, queryset)
+        elif export_type == 'processed':
+            ProcessedExportModel.as_csv(f.name, queryset)
+
         response = HttpResponse(f.read(), content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename={}.csv'.format(slugify(dataset))
     return response
