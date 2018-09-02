@@ -24,7 +24,7 @@ def annotate_datasets_for_view(datasets: QuerySet, user: Optional[User] = None, 
                                                          , FloatField()),
                                                      output_field=FloatField()))
 
-    annotated_fields = ['id', 'title', 'description', 'nr_labels', 'nr_tasks',
+    annotated_fields = ['id', 'title', 'description', 'nr_labels', 'nr_tasks', 'task_type',
                         'labeling_approach', 'min_labels_per_key', 'processed_percentage']
     if user:
         if user.is_anonymous:
