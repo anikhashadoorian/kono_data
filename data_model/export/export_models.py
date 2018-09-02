@@ -3,7 +3,6 @@ import csv
 from data_model.export.export_utils import get_scores_from_queryset
 
 from django.db.models import Func, F, Value
-from django.db.models.functions import Lower
 
 
 class RawExportModel(object):
@@ -65,7 +64,7 @@ class ProcessedExportModel:
                           ).union(set(label_queryset.values_list('key2', flat=True)))
 
         label_name_to_scores = {label_name: get_scores_from_queryset(label_queryset, unique_keys, label_name)
-                           for label_name in label_names}
+                                for label_name in label_names}
 
         fields = ['key'] + column_names
         with open(file, 'w+') as f:
