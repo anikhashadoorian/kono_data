@@ -5,6 +5,7 @@ bleach==2.1.4
 boto==2.48.0
 boto3==1.7.9
 botocore==1.10.9
+bugsnag==3.4.3
 certifi==2018.4.16
 cfn-flip==1.0.3
 chardet==3.0.4
@@ -53,6 +54,7 @@ typed-ast==1.1.0
 Unidecode==1.0.22
 urllib3==1.22
 webencodings==0.5.1
+WebOb==1.8.2
 Werkzeug==0.14.1
 wrapt==1.10.11
 wsgi-request-logger==0.4.6

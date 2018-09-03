@@ -81,8 +81,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    "account.middleware.LocaleMiddleware",
-    "account.middleware.TimezoneMiddleware"
+    'account.middleware.LocaleMiddleware',
+    'account.middleware.TimezoneMiddleware',
+    'bugsnag.django.middleware.BugsnagMiddleware',
 ]
 
 ROOT_URLCONF = 'kono_data.urls'
