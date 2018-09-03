@@ -6,7 +6,7 @@ from django.shortcuts import redirect, render
 
 from data_model.enums import TaskType, UnknownTaskTypeException, LabelActionType
 from data_model.models import Dataset, Label
-from data_model.utils import get_unprocessed_task
+from data_model.utils import get_unprocessed_task, str_to_int
 from kono_data.process_forms import task_type_to_process_form
 from kono_data.utils import get_s3_bucket_from_str, process_form_data_for_tasktype
 
@@ -32,9 +32,14 @@ def process(request, **kwargs):
             task = form.data.get('task')
             processing_time = form.data.get('processing-time')
             loading_time = form.data.get('loading-time')
-            if not processing_time:
+            if processing_time:
+                processing_time = str_to_int(processing_time)
+            else:
                 processing_time = -1
-            if not loading_time:
+
+            if loading_time:
+                loading_time = str_to_int(loading_time)
+            else:
                 loading_time = -1
 
             is_skip_action = LabelActionType.skip.value in request.POST
@@ -48,7 +53,7 @@ def process(request, **kwargs):
                 action, user.id, dataset.id, loading_time, processing_time
             ))
             Label.objects.create(data=data, action=action, user=user, dataset=dataset, task=task,
-                                 processing_time=int(processing_time), loading_time=int(loading_time))
+                                 processing_time=str_to_int(processing_time), loading_time=str_to_int(loading_time))
 
         return redirect("process", dataset=dataset_id)
 

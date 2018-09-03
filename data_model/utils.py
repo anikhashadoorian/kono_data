@@ -84,3 +84,10 @@ def get_dataset_from_invite_key(invite_key):
     if not invite_key:
         return None
     return Dataset.objects.filter(invite_key=invite_key).first()
+
+
+def str_to_int(s):
+    try:
+        return int(s)
+    except ValueError:
+        return float(int(s))
