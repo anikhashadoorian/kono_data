@@ -29,15 +29,9 @@ logging.config.dictConfig({
     },
     'loggers': {
         '': {
-            'level': 'WARNING',
-            'handlers': ['console', ],
-        },
-        'kono_data': {
             'level': 'INFO',
             'handlers': ['console', ],
-            # required to avoid double logging with root logger
-            'propagate': False,
-        },
+        }
     },
 })
 

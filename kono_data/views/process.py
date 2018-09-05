@@ -10,6 +10,10 @@ from data_model.utils import get_unprocessed_task, str_to_int
 from kono_data.process_forms import task_type_to_process_form
 from kono_data.utils import get_s3_bucket_from_str, process_form_data_for_tasktype
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 def process(request, **kwargs):
     context = {}
@@ -49,7 +53,7 @@ def process(request, **kwargs):
             else:
                 data = process_form_data_for_tasktype(task, dataset.task_type, form.cleaned_data)
                 action = LabelActionType.solve.value
-            print('Creating label with action {} for user {} in dataset {} - times: load {} processing {}'.format(
+            logger.info('Creating label with action {} for user {} in dataset {} - times: load {} processing {}'.format(
                 action, user.id, dataset.id, loading_time, processing_time
             ))
             Label.objects.create(data=data, action=action, user=user, dataset=dataset, task=task,

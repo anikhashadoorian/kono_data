@@ -24,10 +24,10 @@ def get_scores_from_queryset(queryset, keys, label_name, normalise=True) -> Dict
     return key_to_rating_score_dict
 
 
-def create_ratings_dict_from_queryset(queryset, keys, label_name, rating_env) -> dict:
+def create_ratings_dict_from_queryset(queryset, keys, label_name, rating_env, repetition_count=12) -> dict:
     key_to_rating_dict = create_key_to_rating_score_dict(keys, rating_env)
 
-    for label in queryset.all():
+    for label in (x for _ in range(repetition_count) for x in queryset):
         is_draw = label.action == LabelActionType.skip.value
         if is_draw:
             key1, key2 = label.key1, label.key2

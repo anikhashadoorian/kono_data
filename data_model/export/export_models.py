@@ -53,7 +53,8 @@ class ProcessedExportModel:
         """
         dataset = label_queryset.first().dataset
         label_names = dataset.possible_labels
-        label_field_tuples = [(f'score_{label}', f'normalised_score_{label}') for label in label_names]
+        label_field_tuples = [(f'score_{label}', f'normalised_score_{label}', f'confidence_{label}')
+                              for label in label_names]
         column_names = list(sum(label_field_tuples, ()))
 
         label_queryset = label_queryset.exclude(task__isnull=True).exclude(task='').annotate(
@@ -73,7 +74,8 @@ class ProcessedExportModel:
             for key in unique_keys:
                 row = [key]
                 score_tuples = [(label_name_to_scores[label_name][key].score,
-                                 label_name_to_scores[label_name][key].normalised_score) for label_name in label_names]
+                                 label_name_to_scores[label_name][key].normalised_score,
+                                 label_name_to_scores[label_name][key].rating.sigma) for label_name in label_names]
                 row += list(sum(score_tuples, ()))
                 writer.writerow(row)
             path = f.name

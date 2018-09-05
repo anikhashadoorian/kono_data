@@ -34,12 +34,12 @@ def annotate_datasets_for_view(datasets: QuerySet, user: Optional[User] = None, 
         else:
             annotated = annotated.annotate(
                 is_user_authorised_admin=Case(
-                    When(Q(user=user) | Q(admins__id=user.id) | Q(contributors__id=user.id), then=True),
+                    When(Q(user=user) | Q(admins__id=user.id), then=True),
                     default=False, output_field=BooleanField()))
             annotated = annotated.annotate(
-                is_user_authorised_to_contribute=Case(When(Q(is_public=True) | Q(is_user_authorised_admin=True),
-                                                           then=True),
-                                                      default=False, output_field=BooleanField()))
+                is_user_authorised_to_contribute=Case(
+                    When(Q(is_public=True) | Q(is_user_authorised_admin=True) | Q(contributors__id=user.id),
+                         then=True), default=False, output_field=BooleanField()))
             annotated_fields += ['is_user_authorised_admin', 'is_user_authorised_to_contribute']
 
     if n:
@@ -90,4 +90,4 @@ def str_to_int(s):
     try:
         return int(s)
     except ValueError:
-        return float(int(s))
+        return int(float(s))
