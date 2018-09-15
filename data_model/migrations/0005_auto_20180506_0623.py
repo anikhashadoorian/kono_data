@@ -13,11 +13,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterField(
             model_name='dataset',
-            name='labeling_approach',
-            field=models.CharField(choices=[('width_first', 'width_first'), ('depth_first', 'depth_first')], default=data_model.enums.LabelingApproachEnum('width_first'), help_text='Choose a labeling approaching. This influences which keys are shown to your users first. Only revelant if min_labels_per_key is larger than 1.Width first: get a label for every key first and then reach the minimum labels per key.Depth first: get the minimum labels per key first and then continue to other keys.', max_length=128),
-        ),
-        migrations.AlterField(
-            model_name='dataset',
             name='source_region',
             field=models.CharField(choices=[('ap-south-1', 'ap-south-1'), ('ap-northeast-1', 'ap-northeast-1'), ('ap-northeast-2', 'ap-northeast-2'), ('ap-northeast-3', 'ap-northeast-3'), ('ap-southeast-1', 'ap-southeast-1'), ('ap-southeast-2', 'ap-southeast-2'), ('cn-north-1', 'cn-north-1'), ('cn-northwest-1', 'cn-northwest-1'), ('eu-central-1', 'eu-central-1'), ('eu-west-1', 'eu-west-1'), ('eu-west-2', 'eu-west-2'), ('eu-west-3', 'eu-west-3'), ('sa-east-1', 'sa-east-1'), ('us-east-1', 'us-east-1'), ('us-east-2', 'us-east-2'), ('us-west-1', 'us-west-1'), ('us-west-2', 'us-west-2'), ('ca-central-1', 'ca-central-1')], default=data_model.enums.AwsRegionType('eu-west-1'), help_text='Give the AWS region of the S3 bucket. Required to show the content', max_length=128),
         ),

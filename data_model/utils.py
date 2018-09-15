@@ -19,13 +19,11 @@ def annotate_datasets_for_view(datasets: QuerySet, user: Optional[User] = None, 
 
     annotated = annotated.annotate(processed_percentage=
                                    ExpressionWrapper((100 * F('nr_labels')) /
-                                                     Cast(
-                                                         (F('nr_tasks') * F('min_labels_per_key'))
-                                                         , FloatField()),
+                                                     Cast((F('nr_tasks') * F('labels_per_key')), FloatField()),
                                                      output_field=FloatField()))
 
-    annotated_fields = ['id', 'title', 'description', 'nr_labels', 'nr_tasks', 'task_type',
-                        'labeling_approach', 'min_labels_per_key', 'processed_percentage']
+    annotated_fields = ['id', 'title', 'description', 'nr_labels', 'nr_tasks', 'task_type', 'labels_per_key',
+                        'processed_percentage']
     if user:
         if user.is_anonymous:
             annotated = annotated.annotate(
