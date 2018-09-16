@@ -27,7 +27,7 @@ class BaseTestCase(TestCase):
         add_to_dic_if_not_exist(kwargs, 'task_type', TaskType.two_image_comparison.value)
         add_to_dic_if_not_exist(kwargs, 'keys', BaseTestCase.DEFAULT_KEYS)
         add_to_dic_if_not_exist(kwargs, 'tasks', BaseTestCase.DEFAULT_COMPARISON_TASKS)
-        add_to_dic_if_not_exist(kwargs, 'possible_labels', ['hotdog', 'not_hotdog'])
+        add_to_dic_if_not_exist(kwargs, 'label_names', ['hotdog', 'not_hotdog'])
         return Dataset.objects.create(user=user, **kwargs)
 
     @classmethod

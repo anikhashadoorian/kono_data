@@ -11,9 +11,8 @@
       "is_public": false,
       "title": "stream-classifier-data",
       "description": "test",
-      "labeling_approach": "width_first",
-      "min_labels_per_key": 1,
-      "possible_labels": "[\"single_streamer_fullscreen\", \"single_streamer_overlay\", \"onscreen_chat\", \"game_fullscreen\", \"multiple_streamer\", \"not_ingame\"]",
+      "labels_per_key": 1,
+      "label_names": "[\"single_streamer_fullscreen\", \"single_streamer_overlay\", \"onscreen_chat\", \"game_fullscreen\", \"multiple_streamer\", \"not_ingame\"]",
       "source_data": {
         "keys": [
           "ageofempires2/RKzdKYE42AU#_00001.png",
@@ -11817,9 +11816,8 @@
       "is_public": true,
       "title": "Test",
       "description": "t",
-      "labeling_approach": "width_first",
-      "min_labels_per_key": 1,
-      "possible_labels": "[\"hotdog\", \"not hotdog\"]",
+      "labels_per_key": 1,
+      "label_names": "[\"hotdog\", \"not hotdog\"]",
       "source_data": {
         "keys": [
           "hannah-rodrigo-14680-unsplash.jpg",

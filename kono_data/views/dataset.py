@@ -6,8 +6,8 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.utils.text import slugify
 
-from data_model.export.export_models import RawExportModel, SUPPORTED_EXPORT_MODELS, ProcessedExportModel
-from data_model.models import Dataset, Label
+from data_model.export.dataset_export_models import RawDatasetExport, ProcessedDatasetExport, DatasetExport
+from data_model.models import Dataset
 from data_model.utils import annotate_datasets_for_view, annotate_dataset_for_view
 from kono_data.forms import DatasetForm
 from kono_data.settings import USERS_VISIBLE_ON_LEADERBOARD
@@ -60,7 +60,7 @@ def export_dataset(request, **kwargs):
     dataset_id = kwargs.get('dataset')
     export_type = kwargs.get('export_type')
 
-    if export_type not in SUPPORTED_EXPORT_MODELS:
+    if export_type not in DatasetExport.SUPPORTED_EXPORT_MODELS:
         messages.info(request, f'Export type {export_type} is not supported for this dataset')
         return redirect('index')
 
@@ -69,16 +69,18 @@ def export_dataset(request, **kwargs):
         messages.error(request, 'You\'re not authorized to export this dataset =(')
         return redirect('index')
 
-    queryset = Label.objects.filter(dataset=dataset)
-    if not queryset.exists():
+    if not dataset.labels.exists():
         messages.info(request, 'There are no labels for this dataset yet. Start processing first')
         return redirect('index')
 
     with tempfile.NamedTemporaryFile() as f:
         if export_type == 'raw':
-            RawExportModel.as_csv(f.name, queryset)
+            RawDatasetExport.as_csv(f.name, dataset)
         elif export_type == 'processed':
-            ProcessedExportModel.as_csv(f.name, queryset)
+            ProcessedDatasetExport.as_csv(f.name, dataset)
+        else:
+            messages.error(request, 'Invalid export type selected for ')
+            return redirect('index')
 
         response = HttpResponse(f.read(), content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename={}.csv'.format(slugify(dataset))

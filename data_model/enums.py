@@ -42,10 +42,5 @@ class AwsRegionType(ChoiceEnum):
     ca_central_1 = 'ca-central-1'
 
 
-class LabelingApproachEnum(ChoiceEnum):
-    width_first = 'width_first'
-    depth_first = 'depth_first'
-
-
 class UnknownTaskTypeException(Exception):
     pass

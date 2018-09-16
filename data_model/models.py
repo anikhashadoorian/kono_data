@@ -14,7 +14,7 @@ from django.urls import reverse
 from django.utils import timezone
 from markdownx.models import MarkdownxField
 
-from data_model.enums import AwsRegionType, LabelingApproachEnum, TaskType, LabelActionType
+from data_model.enums import AwsRegionType, TaskType, LabelActionType
 from data_model.model_utils import generate_invite_key
 from kono_data.const import S3_ARN_PREFIX
 from kono_data.utils import get_s3_bucket_from_str, generate_comparison_tasks_from_keys
@@ -42,18 +42,10 @@ class Dataset(models.Model):
                                  default=TaskType.single_image_label,
                                  max_length=128,
                                  help_text='Task Type: label a single image or compare two images')
-    labeling_approach = models.CharField(choices=LabelingApproachEnum.choices(),
-                                         default=LabelingApproachEnum.width_first,
-                                         max_length=128,
-                                         help_text='Choose a labeling approaching. This influences which keys are shown '
-                                                   'to your users first. Only revelant if min_labels_per_key is larger than 1.'
-                                                   'Width first: get a label for every key first and then reach the minimum labels per key.'
-                                                   'Depth first: get the minimum labels per key first and then continue to other keys.')
-    min_labels_per_key = models.PositiveSmallIntegerField(default=1,
-                                                          help_text='How many labels should be saved for each key')
-    possible_labels = ArrayField(
-        models.CharField(max_length=128, blank=False),
-        help_text='Give a comma-separated list of the labels in your dataset. Example: "hotdog, not hotdog"')
+    labels_per_key = models.PositiveSmallIntegerField(default=1,
+                                                      help_text='How many labels should be saved for each key')
+    label_names = ArrayField(models.CharField(max_length=128, blank=False),
+                             help_text='Give a comma-separated list of the labels in your dataset. Example: "hotdog, not hotdog"')
     keys = ArrayField(models.CharField(max_length=256), null=True, blank=True)
     tasks = ArrayField(models.CharField(max_length=256), blank=True, null=True)
     source_data = JSONField(default=dict,
@@ -120,7 +112,7 @@ class Dataset(models.Model):
 
     @property
     def nr_required_labels(self) -> int:
-        return len(self.tasks) * self.min_labels_per_key
+        return len(self.tasks) * self.labels_per_key
 
     def is_user_authorised_to_contribute(self, user: User) -> bool:
         if self.is_public:
@@ -160,7 +152,7 @@ class Label(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='labels')
     dataset = models.ForeignKey(Dataset, on_delete=models.CASCADE, related_name='labels')
-    task = models.CharField(max_length=128)
+    task = models.CharField(max_length=128, null=False, blank=False)
     data = JSONField()
     action = models.CharField(choices=LabelActionType.choices(), max_length=64)
     processing_time = models.IntegerField(null=False, blank=False)

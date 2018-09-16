@@ -29,7 +29,6 @@ class Migration(migrations.Migration):
                 ('is_public', models.BooleanField(default=False)),
                 ('title', models.CharField(help_text='Give your dataset a descriptive title', max_length=140)),
                 ('description', models.TextField(help_text='Additional information about your dataset', max_length=1000)),
-                ('labeling_approach', models.CharField(choices=[('width_first', 'width_first'), ('depth_first', 'depth_first')], default=data_model.enums.LabelingApproachEnum('width_first'), help_text='Choose a labeling approaching. This influences which keys are shown to your users first. Only revelant if min_labels_per_key is larger than 1.Width first: get a label for every key first and then reach the minimum labels per key.Depth first: get the minimum labels per key first and then continue to other keys.', max_length=16)),
                 ('min_labels_per_key', models.PositiveSmallIntegerField(default=1, help_text='How many labels should be saved for each key')),
                 ('possible_labels', django.contrib.postgres.fields.ArrayField(base_field=models.CharField(max_length=128), help_text='Give a comma-separated list of the labels in your dataset. Example: "hotdog, not hotdog"', size=None)),
                 ('source_data', django.contrib.postgres.fields.jsonb.JSONField(help_text='Keys in your dataset, will be automatically fetched and overwritten each time you save.')),

@@ -27,7 +27,7 @@ def process(request, **kwargs):
         return redirect('index')
 
     form_class = task_type_to_process_form[dataset.task_type]
-    form = form_class(request.POST or None, labels=dataset.possible_labels)
+    form = form_class(request.POST or None, labels=dataset.label_names)
 
     if form.is_valid():
         if user.is_anonymous:

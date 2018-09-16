@@ -1,27 +1,37 @@
 import csv
+from abc import abstractmethod
 
-from data_model.export.export_utils import get_scores_from_queryset
+from data_model.export.export_utils import get_scores_from_labels
 
 from django.db.models import Func, F, Value
 
 
-class RawExportModel(object):
-    @staticmethod
-    def as_csv(file, label_queryset):
+class DatasetExport:
+    SUPPORTED_EXPORT_MODELS = ['raw', 'processed']
+    OUTDATED_KEYS = 'outdated_keys'
+
+    @classmethod
+    @abstractmethod
+    def as_csv(cls, file, dataset):
+        raise NotImplementedError
+
+
+class RawDatasetExport(DatasetExport):
+    @classmethod
+    def as_csv(cls, file, dataset):
         """
         'file' (string: absolute path),
         'queryset' a Django QuerySet instance,
         'fields' a list or tuple of field model field names (strings)
         :returns (string) path to file
         """
-        dataset = label_queryset.first().dataset
-        fields = ['task', 'user_id', 'processing_time', 'loading_time'] + dataset.possible_labels + [OUTDATED_KEYS]
+        fields = ['task', 'user_id', 'processing_time', 'loading_time'] + dataset.label_names + [cls.OUTDATED_KEYS]
         nr_fields = len(fields)
-        outdated_tasks_index = fields.index(OUTDATED_KEYS)
+        outdated_tasks_index = fields.index(cls.OUTDATED_KEYS)
         with open(file, 'w+') as f:
             writer = csv.writer(f)
             writer.writerow(fields)
-            for obj in label_queryset:
+            for obj in dataset.labels:
                 if not obj.task:
                     continue
 
@@ -42,29 +52,29 @@ class RawExportModel(object):
         return path
 
 
-class ProcessedExportModel:
-    @staticmethod
-    def as_csv(file, label_queryset):
+class ProcessedDatasetExport(DatasetExport):
+    @classmethod
+    def as_csv(cls, file, dataset):
         """
         'file' (string: absolute path),
         'queryset' a Django QuerySet instance,
         'fields' a list or tuple of field model field names (strings)
         :returns (string) path to file
         """
-        dataset = label_queryset.first().dataset
-        label_names = dataset.possible_labels
-        label_field_tuples = [(f'score_{label}', f'normalised_score_{label}', f'confidence_{label}')
-                              for label in label_names]
+        label_names = dataset.label_names
+        label_field_tuples = [(f'score_{label}',
+                               f'normalised_score_{label}',
+                               f'confidence_{label}') for label in label_names]
         column_names = list(sum(label_field_tuples, ()))
 
-        label_queryset = label_queryset.exclude(task__isnull=True).exclude(task='').annotate(
+        annotated_labels = dataset.labels.annotate(
             key1=Func(F('task'), Value(','), Value(1), function='split_part'),
             key2=Func(F('task'), Value(','), Value(2), function='split_part'))
 
-        unique_keys = set(label_queryset.values_list('key1', flat=True)
-                          ).union(set(label_queryset.values_list('key2', flat=True)))
+        unique_keys = set(annotated_labels.values_list('key1', flat=True)
+                          ).union(set(annotated_labels.values_list('key2', flat=True)))
 
-        label_name_to_scores = {label_name: get_scores_from_queryset(label_queryset, unique_keys, label_name)
+        label_name_to_scores = {label_name: get_scores_from_labels(annotated_labels, unique_keys, label_name)
                                 for label_name in label_names}
 
         fields = ['key'] + column_names
@@ -80,7 +90,3 @@ class ProcessedExportModel:
                 writer.writerow(row)
             path = f.name
         return path
-
-
-SUPPORTED_EXPORT_MODELS = ['raw', 'processed']
-OUTDATED_KEYS = 'outdated_keys'
