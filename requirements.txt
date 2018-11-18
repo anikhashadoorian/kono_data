@@ -17,7 +17,7 @@ django-appconf==1.0.2
 django-bootstrap4==0.0.6
 django-markdownify==0.8.0
 django-markdownx==2.0.24
-django-prettyjson==0.4.0
+django-prettyjson==0.4.1
 django-storages==1.7.1
 django-user-accounts==2.0.3
 docutils==0.14
