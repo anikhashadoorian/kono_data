@@ -47,7 +47,6 @@ DEBUG = True
 ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
-    'prettyjson',
     'admin_tools',
     'admin_tools.theming',
     'admin_tools.menu',

@@ -6,6 +6,7 @@ class UtilsTestCase(BaseTestCase):
     def test_getUnprocessedTask_newUserAndDatasetGiven_unprocessedTaskAndIsFirstTaskTrueReturned(self):
         user = self.generate_user()
         dataset = self.generate_dataset()
+        self.generate_task(dataset=dataset)
 
         unprocessed_task, is_first_task = get_unprocessed_task(user, dataset)
 
@@ -15,6 +16,7 @@ class UtilsTestCase(BaseTestCase):
     def test_getUnprocessedTask_activeUserAndDatasetGiven_unprocessedTaskAndIsFirstTaskFalseReturned(self):
         user = self.generate_user()
         dataset = self.generate_dataset()
+        self.generate_task(dataset=dataset)
         self.generate_label(user, dataset)
 
         unprocessed_task, is_first_task = get_unprocessed_task(user, dataset)

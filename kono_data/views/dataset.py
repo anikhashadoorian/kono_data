@@ -11,8 +11,10 @@ from data_model.models import Dataset
 from data_model.utils import annotate_datasets_for_view, annotate_dataset_for_view
 from kono_data.forms import DatasetForm
 from kono_data.settings import USERS_VISIBLE_ON_LEADERBOARD
+from kono_data.utils import timing
 
 
+@timing
 def update_or_create_dataset(request, **kwargs):
     dataset_id = kwargs.get('dataset')
     datasets = Dataset.objects.filter(id=dataset_id)
@@ -42,6 +44,7 @@ def update_or_create_dataset(request, **kwargs):
     return render(request, "create_dataset.html", context)
 
 
+@timing
 def fetch_dataset_from_source(request, **kwargs):
     dataset_id = kwargs.get('dataset')
     dataset = Dataset.objects.filter(id=dataset_id).first()
@@ -55,6 +58,7 @@ def fetch_dataset_from_source(request, **kwargs):
         return redirect('index')
 
 
+@timing
 def export_dataset(request, **kwargs):
     user = request.user
     dataset_id = kwargs.get('dataset')
@@ -87,24 +91,25 @@ def export_dataset(request, **kwargs):
     return response
 
 
+@timing
 def index_dataset(request, **kwargs):
     context = {}
     dataset_type = kwargs.get('type')
     context['type'] = dataset_type
     user = request.user
+    datasets = Dataset.objects.none()
     if dataset_type == 'public':
         datasets = Dataset.objects.filter(is_public=True)
     elif not user.is_anonymous:
-        datasets = Dataset.objects.filter(Q(is_public=False) &
-                                          (Q(user=user) | Q(admins__id=user.id) | Q(contributors__id=user.id)))
-    else:
-        datasets = Dataset.objects.none()
+        datasets = Dataset.objects.exclude(is_public=True).filter(
+            Q(user=user) | Q(admins__id=user.id) | Q(contributors__id=user.id)).distinct()
 
     context['datasets'] = annotate_datasets_for_view(datasets, user)
 
     return render(request, "datasets.html", context)
 
 
+@timing
 def show_leaderboard(request, **kwargs):
     dataset_id = kwargs.get('dataset')
     dataset = Dataset.objects.filter(id=dataset_id).first()

@@ -10,6 +10,7 @@ class ProcessingTestCase(BaseIntegrationTestCase):
 
     def test_processingTwoImageComparison_skip_skipLabelSaved(self):
         dataset = self.generate_dataset()
+        self.generate_task(dataset=dataset)
         user = dataset.user
 
         data = {'username': user.username, 'password': user.password}

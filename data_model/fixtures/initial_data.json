@@ -11,7 +11,7 @@
       "is_public": false,
       "title": "stream-classifier-data",
       "description": "test",
-      "labels_per_key": 1,
+      "labels_per_task": 1,
       "label_names": "[\"single_streamer_fullscreen\", \"single_streamer_overlay\", \"onscreen_chat\", \"game_fullscreen\", \"multiple_streamer\", \"not_ingame\"]",
       "source_data": {
         "keys": [
@@ -11814,60 +11814,79 @@
       "source_uri": "arn:aws:s3:::test-kono-data",
       "source_region": "eu-west-1",
       "is_public": true,
-      "title": "Test",
+      "title": "Test Dataset",
       "description": "t",
-      "labels_per_key": 1,
+      "labels_per_task": 1,
       "label_names": "[\"hotdog\", \"not hotdog\"]",
-      "source_data": {
-        "keys": [
-          "hannah-rodrigo-14680-unsplash.jpg",
-          "jc-gellidon-361849-unsplash.jpg",
-          "nainoa-shizuru-80385-unsplash.jpg"
-        ],
-        "nr_keys": 3,
-        "last_fetch": "2018-05-01T08:59:16.698535+00:00"
-      },
       "admins": [],
       "contributors": []
+    }
+  },
+  {
+    "model": "data_model.task",
+    "pk": "f2335c4d-cfa2-4cb0-971f-d243c061846d",
+    "fields": {
+      "created_at": "2018-05-01T09:25:40.162Z",
+      "updated_at": "2018-05-01T09:25:40.162Z",
+      "dataset": "f5735c4d-cfa2-4cb0-971f-d243c061846c",
+      "definition": "hotdog OR no hotdog"
     }
   },
   {
     "model": "data_model.label",
     "pk": 1,
     "fields": {
+      "created_at": "2018-05-01T09:25:40.162Z",
+      "updated_at": "2018-05-01T09:25:40.162Z",
       "user": 1,
+      "task": "f2335c4d-cfa2-4cb0-971f-d243c061846d",
       "dataset": "f5735c4d-cfa2-4cb0-971f-d243c061846c",
-      "key": "nainoa-shizuru-80385-unsplash.jpg",
       "data": {
         "hotdog": true,
         "not hotdog": false
-      }
+      },
+      "processing_time": 1,
+      "loading_time": 1
     }
   },
   {
     "model": "data_model.label",
     "pk": 2,
     "fields": {
+      "created_at": "2018-05-01T09:25:40.162Z",
+      "updated_at": "2018-05-01T09:25:40.162Z",
       "user": 1,
+      "task": "f2335c4d-cfa2-4cb0-971f-d243c061846d",
       "dataset": "f5735c4d-cfa2-4cb0-971f-d243c061846c",
-      "key": "jc-gellidon-361849-unsplash.jpg",
       "data": {
         "hotdog": false,
         "not hotdog": true
-      }
+      },
+      "processing_time": 1,
+      "loading_time": 1
     }
   },
   {
     "model": "data_model.label",
     "pk": 3,
     "fields": {
+      "created_at": "2018-05-01T09:25:40.162Z",
+      "updated_at": "2018-05-01T09:25:40.162Z",
       "user": 1,
+      "task": "f2335c4d-cfa2-4cb0-971f-d243c061846d",
       "dataset": "f5735c4d-cfa2-4cb0-971f-d243c061846c",
-      "key": "hannah-rodrigo-14680-unsplash.jpg",
       "data": {
         "hotdog": true,
         "not hotdog": false
-      }
+      },
+      "processing_time": 1,
+      "loading_time": 1
+    }
+  },
+  {
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
     }
   }
 ]

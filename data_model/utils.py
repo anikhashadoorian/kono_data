@@ -4,25 +4,34 @@ from django.contrib.auth.models import User
 from django.db.models import ExpressionWrapper, F, Count, QuerySet, FloatField, Q, When, BooleanField, Case
 from django.db.models.functions import Cast, Greatest
 
-from data_model.models import Dataset
+from data_model.models import Dataset, Task
 
 from django.db import models
 
-
-class ArrayLength(models.Func):
-    function = 'CARDINALITY'
+from kono_data.utils import timing
 
 
+@timing
+def fetch_qs(qs):
+    return qs.all()
+
+
+@timing
 def annotate_datasets_for_view(datasets: QuerySet, user: Optional[User] = None, n: int = None):
-    annotated = datasets.annotate(nr_labels=Greatest(Count(F('labels')), 0.0),
-                                  nr_tasks=Greatest(
-                                      Cast(ArrayLength('tasks') * F('labels_per_key'), output_field=FloatField()), 0.0))
+    annotated = datasets.annotate(nr_labels=Greatest(Count('labels'), 0.0),
+                                  nr_tasks=Greatest(Count('tasks'), 0.0))
+    fetch_qs(annotated)
 
     annotated = annotated.annotate(processed_percentage=
-                                   ExpressionWrapper((100 * F('nr_labels')) / F('nr_tasks'), output_field=FloatField()))
+                                   ExpressionWrapper((100 * F('nr_labels')) /
+                                                     Cast((F('nr_tasks') * F('labels_per_task')), FloatField()),
+                                                     output_field=FloatField()))
+    fetch_qs(annotated)
 
-    annotated_fields = ['id', 'title', 'description', 'nr_labels', 'nr_tasks', 'task_type', 'labels_per_key',
-                        'processed_percentage']
+    annotated_fields = ['id', 'title',
+                        'description']  # , 'nr_labels', 'nr_tasks', 'task_type', 'labels_per_key', 'processed_percentage']
+
+    # fetch_qs(annotated)
     if user:
         if user.is_anonymous:
             annotated = annotated.annotate(
@@ -40,15 +49,17 @@ def annotate_datasets_for_view(datasets: QuerySet, user: Optional[User] = None, 
             annotated_fields += ['is_user_authorised_admin', 'is_user_authorised_to_contribute']
 
     if n:
-        annotated.order_by('-created_at')
+        annotated = annotated.order_by('-created_at')
         return annotated.values(*annotated_fields)[:n]
 
+    fetch_qs(annotated)
     return annotated.values(*annotated_fields)
 
 
+@timing
 def annotate_dataset_for_view(dataset: Dataset, user: User = None):
     dataset.nr_labels = dataset.labels.count()
-    dataset.nr_tasks = len(dataset.tasks)
+    dataset.nr_tasks = dataset.tasks.count()
 
     if not user:
         return dataset
@@ -61,18 +72,16 @@ def annotate_dataset_for_view(dataset: Dataset, user: User = None):
     return dataset
 
 
-def get_unprocessed_tasks(user: User, dataset: Dataset, n: int) -> List:
+def get_unprocessed_tasks(user: User, dataset: Dataset, n: int) -> QuerySet:
     if user.is_anonymous:
-        return dataset.tasks[:n]
+        return dataset.tasks.all()[:n]
 
-    processed_tasks = user.labels.filter(dataset=dataset).values_list('task', flat=True)
-    unprocessed_tasks = set(dataset.tasks).difference(set(processed_tasks))
-    return list(unprocessed_tasks)[:n]
+    return dataset.tasks.filter(labels__isnull=True).all()[:n]
 
 
-def get_unprocessed_task(user: User, dataset: Dataset) -> Tuple[str, bool]:
+def get_unprocessed_task(user: User, dataset: Dataset) -> Tuple[Task, bool]:
     unprocessed_tasks = get_unprocessed_tasks(user, dataset, n=1)
-    unprocessed_task = unprocessed_tasks[0] if unprocessed_tasks else None
+    unprocessed_task = unprocessed_tasks[0] if unprocessed_tasks.exists() else None
     is_first_task = False if user.is_anonymous else not user.labels.filter(dataset=dataset).exists()
     return unprocessed_task, is_first_task
 

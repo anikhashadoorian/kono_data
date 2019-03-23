@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 
 from data_model.enums import LabelActionType, TaskType
-from data_model.models import Dataset, Label
+from data_model.models import Dataset, Label, Task
 
 
 def add_to_dic_if_not_exist(dic: dict, key, value):
@@ -26,7 +26,6 @@ class BaseTestCase(TestCase):
         add_to_dic_if_not_exist(kwargs, 'is_public', True)
         add_to_dic_if_not_exist(kwargs, 'task_type', TaskType.two_image_comparison.value)
         add_to_dic_if_not_exist(kwargs, 'keys', BaseTestCase.DEFAULT_KEYS)
-        add_to_dic_if_not_exist(kwargs, 'tasks', BaseTestCase.DEFAULT_COMPARISON_TASKS)
         add_to_dic_if_not_exist(kwargs, 'label_names', ['hotdog', 'not_hotdog'])
         return Dataset.objects.create(user=user, **kwargs)
 
@@ -64,10 +63,17 @@ class BaseTestCase(TestCase):
         return user
 
     @classmethod
+    def generate_task(cls, dataset, **kwargs):
+        add_to_dic_if_not_exist(kwargs, 'definition', 'HOTDOG OR NOT')
+        return Task.objects.create(dataset=dataset, **kwargs)
+
+    @classmethod
     def generate_label(cls, user, dataset, **kwargs):
+        if not 'task' in kwargs:
+            kwargs['task'] = cls.generate_task(dataset)
+
         add_to_dic_if_not_exist(kwargs, 'data', {})
         add_to_dic_if_not_exist(kwargs, 'action', LabelActionType.solve.value)
-        add_to_dic_if_not_exist(kwargs, 'task', 'task')
         add_to_dic_if_not_exist(kwargs, 'processing_time', 2342)
         add_to_dic_if_not_exist(kwargs, 'loading_time', 81)
         return Label.objects.create(user=user, dataset=dataset, **kwargs)
