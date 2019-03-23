@@ -1,6 +1,6 @@
 argcomplete==1.9.4
 astroid==2.0.4
-base58==1.0.0
+base58==1.0.3
 bleach==2.1.4
 boto==2.49.0
 boto3==1.7.9
