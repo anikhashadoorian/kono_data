@@ -15,12 +15,11 @@ class ArrayLength(models.Func):
 
 def annotate_datasets_for_view(datasets: QuerySet, user: Optional[User] = None, n: int = None):
     annotated = datasets.annotate(nr_labels=Greatest(Count(F('labels')), 0.0),
-                                  nr_tasks=Greatest(ArrayLength('tasks'), 0.0))
+                                  nr_tasks=Greatest(
+                                      Cast(ArrayLength('tasks') * F('labels_per_key'), output_field=FloatField()), 0.0))
 
     annotated = annotated.annotate(processed_percentage=
-                                   ExpressionWrapper((100 * F('nr_labels')) /
-                                                     Cast((F('nr_tasks') * F('labels_per_key')), FloatField()),
-                                                     output_field=FloatField()))
+                                   ExpressionWrapper((100 * F('nr_labels')) / F('nr_tasks'), output_field=FloatField()))
 
     annotated_fields = ['id', 'title', 'description', 'nr_labels', 'nr_tasks', 'task_type', 'labels_per_key',
                         'processed_percentage']
