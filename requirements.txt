@@ -2,7 +2,7 @@ argcomplete==1.9.3
 astroid==2.0.4
 base58==1.0.0
 bleach==2.1.4
-boto==2.48.0
+boto==2.49.0
 boto3==1.7.9
 botocore==1.10.9
 bugsnag==3.4.3
@@ -11,13 +11,13 @@ cfn-flip==1.0.3
 chardet==3.0.4
 click==6.7
 coverage==4.5.3
-Django==2.1.5
+Django==2.1.7
 django-admin-tools==0.8.1
 django-appconf==1.0.2
 django-bootstrap4==0.0.6
 django-markdownify==0.8.0
 django-markdownx==2.0.24
-django-prettyjson==0.4.0
+django-prettyjson==0.4.1
 django-storages==1.7.1
 django-user-accounts==2.0.3
 docutils==0.14
@@ -58,4 +58,4 @@ WebOb==1.8.2
 Werkzeug==0.14.1
 wrapt==1.10.11
 wsgi-request-logger==0.4.6
-zappa==0.46.2
+zappa==0.48.2
