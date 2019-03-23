@@ -5,14 +5,13 @@ import uuid
 
 from django.db import migrations, models
 import django.db.models.deletion
-from tqdm import tqdm
 
 
 def creates_tasks_from_dataset_array_field(apps, schema_editor):
     Dataset = apps.get_model("data_model", "Dataset")
     Task = apps.get_model("data_model", "Task")
 
-    for dataset in tqdm(Dataset.objects.all()):
+    for dataset in Dataset.objects.all():
         Task.objects.bulk_create([
             Task(dataset=dataset, definition=definition) for definition in dataset.tasks
         ])
