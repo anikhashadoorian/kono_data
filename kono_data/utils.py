@@ -1,8 +1,11 @@
+import logging
 from itertools import combinations
 from random import sample
 from typing import Optional, List, Tuple
 
 from data_model.enums import TaskType, UnknownTaskTypeException
+
+logger = logging.getLogger(__name__)
 
 
 def get_s3_bucket_from_str(arn: str) -> Optional[str]:
@@ -14,18 +17,43 @@ def get_s3_bucket_from_str(arn: str) -> Optional[str]:
         return arn
 
 
-def generate_comparison_tasks_from_keys(keys, ratio=0.01, max_nr_tasks=10000) -> List[Tuple[str, str]]:
+class GenerateComparisonTasksException(Exception):
+    pass
+
+
+def generate_comparison_tasks_from_keys(keys: List[str],
+                                        prev_tasks: List[str] = None,
+                                        ratio: float = 0.1,
+                                        max_nr_tasks: int = 100000) -> List[str]:
     """
     :param keys: list of keys to be compared to each other
+    :param prev_tasks: list of previous tasks that should not be removed in new calculation
     :param ratio: ratio of comparison tasks to be opened for each key to all others.
-                1 equals every image with each other
+                1 means every key with all other keys
+    :param max_nr_tasks: max number of tasks that can be returned.
+                return can be smaller depending on nr. of keys and ratio
     :return: list of tasks = list of tuples of two keys
     """
+
+    if not prev_tasks:
+        prev_tasks = []
+
+    if len(prev_tasks) >= max_nr_tasks:
+        raise GenerateComparisonTasksException(f'Cannot generate new comparison tasks. {len(prev_tasks)} previous tasks'
+                                               f' is more than {max_nr_tasks} max_nr_tasks')
+
+    if ratio > 1:
+        raise GenerateComparisonTasksException(f'Ratio {ratio} is larger 1. Duplicate task creation not supported')
+
     all_possible_combinations = list(combinations(keys, 2))
-    nr_tasks = min(len(all_possible_combinations) * ratio, max_nr_tasks)
-    tasks = sample(all_possible_combinations, int(nr_tasks))
-    tasks_as_str = [f'{k1},{k2}' for k1, k2 in tasks]
-    return tasks_as_str
+    should_ignore_ratio = len(all_possible_combinations) * ratio < len(keys)
+    if should_ignore_ratio:
+        ratio = 1
+
+    nr_new_tasks = min(len(all_possible_combinations) * ratio, max_nr_tasks - len(prev_tasks))
+    new_tasks = sample(all_possible_combinations, int(nr_new_tasks))
+    tasks_as_str = [f'{k1},{k2}' for k1, k2 in new_tasks] + prev_tasks
+    return list(set(tasks_as_str))
 
 
 def process_form_data_for_tasktype(task, task_type, data):

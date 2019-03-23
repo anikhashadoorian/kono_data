@@ -98,7 +98,7 @@ class Dataset(models.Model):
 
         self.keys = keys
         if self.task_type == TaskType.two_image_comparison.value:
-            tasks = generate_comparison_tasks_from_keys(keys)
+            tasks = generate_comparison_tasks_from_keys(keys=keys, prev_tasks=self.tasks)
         else:
             tasks = keys
         self.tasks = tasks
