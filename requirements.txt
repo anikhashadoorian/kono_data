@@ -58,4 +58,4 @@ WebOb==1.8.2
 Werkzeug==0.14.1
 wrapt==1.10.11
 wsgi-request-logger==0.4.6
-zappa==0.46.2
+zappa==0.48.2
