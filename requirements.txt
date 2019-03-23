@@ -1,4 +1,4 @@
-argcomplete==1.9.3
+argcomplete==1.9.4
 astroid==2.0.4
 base58==1.0.0
 bleach==2.1.4
