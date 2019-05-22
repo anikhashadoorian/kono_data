@@ -1,6 +1,5 @@
 import logging
 
-from django.db.models import Q
 from django.views.generic import TemplateView
 
 from data_model.models import Dataset

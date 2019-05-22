@@ -2,11 +2,9 @@ from typing import Optional, List, Tuple
 
 from django.contrib.auth.models import User
 from django.db.models import ExpressionWrapper, F, Count, QuerySet, FloatField, Q, When, BooleanField, Case
-from django.db.models.functions import Cast, Greatest
 
 from data_model.models import Dataset, Task
 
-from django.db import models
 
 from kono_data.utils import timing
 
@@ -18,41 +16,29 @@ def fetch_qs(qs):
 
 @timing
 def annotate_datasets_for_view(datasets: QuerySet, user: Optional[User] = None, n: int = None):
-    annotated = datasets.annotate(nr_labels=Greatest(Count('labels'), 0.0),
-                                  nr_tasks=Greatest(Count('tasks'), 0.0))
-    fetch_qs(annotated)
+    datasets = datasets.only('id', 'title', 'description')
+    annotated_fields = ['id', 'title', 'description', 'task_type', 'labels_per_task']
 
-    annotated = annotated.annotate(processed_percentage=
-                                   ExpressionWrapper((100 * F('nr_labels')) /
-                                                     Cast((F('nr_tasks') * F('labels_per_task')), FloatField()),
-                                                     output_field=FloatField()))
-    fetch_qs(annotated)
-
-    annotated_fields = ['id', 'title',
-                        'description']  # , 'nr_labels', 'nr_tasks', 'task_type', 'labels_per_key', 'processed_percentage']
-
-    # fetch_qs(annotated)
     if user:
         if user.is_anonymous:
-            annotated = annotated.annotate(
+            annotated = datasets.annotate(
                 is_user_authorised_to_contribute=F('is_public'))
             annotated_fields += ['is_user_authorised_to_contribute']
         else:
-            annotated = annotated.annotate(
+            annotated = datasets.annotate(
                 is_user_authorised_admin=Case(
                     When(Q(user=user) | Q(admins__id=user.id), then=True),
                     default=False, output_field=BooleanField()))
             annotated = annotated.annotate(
                 is_user_authorised_to_contribute=Case(
-                    When(Q(is_public=True) | Q(is_user_authorised_admin=True) | Q(contributors__id=user.id),
-                         then=True), default=False, output_field=BooleanField()))
+                    When(Q(is_public=False) & Q(is_user_authorised_admin=False) & Q(contributors__id=user.id),
+                         then=False), default=True, output_field=BooleanField()))
             annotated_fields += ['is_user_authorised_admin', 'is_user_authorised_to_contribute']
 
     if n:
         annotated = annotated.order_by('-created_at')
         return annotated.values(*annotated_fields)[:n]
 
-    fetch_qs(annotated)
     return annotated.values(*annotated_fields)
 
 

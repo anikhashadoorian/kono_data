@@ -7,9 +7,9 @@
         <h1>kono data</h1>
         <br/>
         <p>
-        <b>kono data provides an easy way to label unstructured datasets. </b><br/>
-        It helps you assign labels to images or compare two images.<br/>
-        You can work on a dataset with a group of other people or by yourself.</p>
+            <b>kono data provides an easy way to label unstructured datasets. </b><br/>
+            It helps you assign labels to images or compare two images.<br/>
+            You can work on a dataset with a group of other people or by yourself.</p>
         <h4>
             <p>Read more on
                 <a class="btn btn-outline-info btn-sm"
@@ -44,11 +44,12 @@
         <div class="row">
             <h2>{% if user.is_anonymous %}Public {% else %} Your {% endif %}datasets</h2>
         </div>
+        {% for dataset in datasets %}
         <div class="row">
-            {% for dataset in datasets %}
             {% include "partials/dataset.html" %}
-            {% endfor %}
+            <br/>
         </div>
+        {% endfor %}
     </div>
 </div>
 {% endblock %}

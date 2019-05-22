@@ -29,12 +29,12 @@ def update_or_create_dataset(request, **kwargs):
         if form.is_valid():
             dataset = form.save(commit=False)
             dataset.user = request.user
+            dataset.save()
 
             if request.POST.get('submit') == 'save_and_fetch':
                 dataset.fetch_keys_from_source()
                 return redirect('process', dataset=dataset.pk)
             else:
-                dataset.save()
                 return redirect('index')
     else:
         form = DatasetForm(instance=dataset)
