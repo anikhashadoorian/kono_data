@@ -26,9 +26,9 @@
         </div>
         <br/>
         {% endif %}
-        {% if dataset.nr_label and dataset.nr_tasks %}
+        {% if dataset.nr_labels and dataset.nr_tasks %}
         <div class="row">
-            <div class="col-4">Tasks done: {{ dataset.nr_labels|floatformat:"0" }}</div>
+            <div class="col-4">Labels created: {{ dataset.nr_labels|floatformat:"0" }}</div>
             <div class="col-4">All Tasks: {{ dataset.nr_tasks|floatformat:"0" }}</div>
         </div>
         {% endif %}

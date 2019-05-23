@@ -1,10 +1,9 @@
-from typing import Optional, List, Tuple
+from typing import Optional, Tuple
 
 from django.contrib.auth.models import User
-from django.db.models import ExpressionWrapper, F, Count, QuerySet, FloatField, Q, When, BooleanField, Case
+from django.db.models import F, Count, QuerySet, Q, When, BooleanField, Case
 
 from data_model.models import Dataset, Task
-
 
 from kono_data.utils import timing
 
@@ -17,7 +16,8 @@ def fetch_qs(qs):
 @timing
 def annotate_datasets_for_view(datasets: QuerySet, user: Optional[User] = None, n: int = None):
     datasets = datasets.only('id', 'title', 'description')
-    annotated_fields = ['id', 'title', 'description', 'task_type', 'labels_per_task']
+    datasets = datasets.annotate(nr_labels=Count('labels'), nr_tasks=Count('tasks'))
+    annotated_fields = ['id', 'title', 'description', 'task_type', 'labels_per_task', 'nr_tasks', 'nr_labels']
 
     if user:
         if user.is_anonymous:
