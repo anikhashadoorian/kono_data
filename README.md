@@ -12,16 +12,21 @@ You can use the hosted version ([kono-data.runningco.de](https://kono-data.runni
 
 You provide Kono Data with a path to your dataset (currently only AWS S3 is supported) and possible labels for each datapoint.
 
-## How does the processing flow look like?
+## How does the labeling flow look like?
 On the left side you see an image and on the right its possible labels.
 Click the checkbox or type the number and a label is selected.
 One or all labels can be selected. If you click _Save_ or hit enter your input is saved for this image and the next one in the dataset is loaded.
 
-<img src="docs/img/label_hotdog.png" alt="" style="height:200px;" />
+### Classification of one image  
 
-## How can I see the labeling progress of a dataset?
+<img src="docs/img/label_hotdog.png" alt="Image Classification" style="height:200px;" />
+
+### Compare two GIFs  
+
+<img src="docs/img/comparison_task_apex_legends_gifs.png" alt="Compare two GIFs" style="height:200px;" />
+
 ## How can I export a dataset?
-<img src="docs/img/export_hotdog.png" alt="" style="height:200px;" />
+<img src="docs/img/export_hotdog.png" alt="Dataset Export" style="height:200px;" />
 
 ## [FAQ](FAQ.md)
   
