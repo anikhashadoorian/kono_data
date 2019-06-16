@@ -1,7 +1,7 @@
 {% block dataset %}
 {% load markdownify %}
 <div class="row">
-    <div class="col-md-9">
+    <div class="col-md-12">
         <div class="row">
             <div class="col-12">
                 <h3>{{ dataset.title }}</h3>
@@ -33,13 +33,11 @@
         </div>
         {% endif %}
     </div>
-</div>
-<div class="row">
-    <div class="col-md-3">
-        <div class="row ">
-            {% include "partials/dataset_button_group.html" with hide_leaderboard_link=hide_leaderboard_link %}
-        </div>
-
+    <div class="col-md-12">
+        {% include "partials/dataset_button_group.html" with hide_leaderboard_link=hide_leaderboard_link %}
+    </div>
+    <div class="col-md-12">
+        <hr/>
     </div>
 </div>
 {% endblock %}

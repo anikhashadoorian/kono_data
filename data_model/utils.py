@@ -16,8 +16,7 @@ def fetch_qs(qs):
 @timing
 def annotate_datasets_for_view(datasets: QuerySet, user: Optional[User] = None, n: int = None):
     datasets = datasets.only('id', 'title', 'description')
-    datasets = datasets.annotate(nr_labels=Count('labels'), nr_tasks=Count('tasks'))
-    annotated_fields = ['id', 'title', 'description', 'task_type', 'labels_per_task', 'nr_tasks', 'nr_labels']
+    annotated_fields = ['id', 'title', 'description', 'task_type']
 
     if user:
         if user.is_anonymous:

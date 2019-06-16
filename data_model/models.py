@@ -107,9 +107,11 @@ class Dataset(models.Model):
         else:
             task_definitions = keys
 
+        logger.info(f'Start to create {len(task_definitions)} new tasks')
         Task.objects.bulk_create([
             Task(dataset=self, definition=definition) for definition in task_definitions
         ])
+        logger.info(f'Done createing {len(task_definitions)} tasks')
         self.save()
 
     @property
@@ -151,7 +153,7 @@ class Dataset(models.Model):
 
     def get_task_definitions_from_keys(self, keys: List[str],
                                        prev_task_definitions: List[str] = None,
-                                       ratio: float = 0.1, max_nr_tasks: int = 100000) -> List[str]:
+                                       ratio: float = 0.1, max_nr_tasks: int = 500000) -> List[str]:
         """
         :param keys: list of keys to be compared to each other
         :param prev_tasks: list of previous tasks that should not be removed in new calculation
