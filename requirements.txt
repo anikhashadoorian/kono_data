@@ -3,8 +3,8 @@ astroid==2.0.4
 base58==1.0.3
 bleach==2.1.4
 boto==2.49.0
-boto3==1.9.168
-botocore==1.10.9
+boto3==1.7.9
+botocore==1.12.169
 bugsnag==3.5.2
 certifi==2019.3.9
 cfn-flip==1.0.3
@@ -42,11 +42,11 @@ python-slugify==1.2.4
 pytz==2018.7
 PyYAML==4.2b1
 requests==2.20.1
-s3transfer==0.2.1
+s3transfer==0.2.0
 six==1.11.0
 standardjson==0.3.1
 toml==0.10.0
-tqdm==4.32.1
+tqdm==4.19.1
 troposphere==2.4.6
 trueskill==0.4.5
 typed-ast==1.1.0
