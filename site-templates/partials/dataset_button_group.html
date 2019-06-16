@@ -1,22 +1,20 @@
-<div class="container row">
-    <div class="col-12 btn-group" role="group">
-        {% if dataset.is_user_authorised_admin %}
-        <a href="{% url 'process' dataset.id %}" role="button"
-           class="btn btn-info">Start 🚀</a>
-        {% include "partials/export_button_with_modal.html"%}
-        <!-- <a href="{% url 'fetch_dataset' dataset.id %}" role="button"
-           class="btn btn-outline-info">Fetch data ↩️</a>
-           -->
-        <a href="{% url 'update_or_create_dataset' dataset.id %}" role="button"
-           class="btn btn-outline-info">Details 🔍</a>
-        {% include "partials/invite_button_with_modal.html"%}
-        {% elif dataset.is_user_authorised_to_contribute %}
-        <a href="{% url 'process' dataset.id %}" role="button"
-           class="btn btn-info">Start 🚀</a>
-        {% endif %}
-        {% if not hide_leaderboard_link %}
-        <a href="{% url 'show_leaderboard' dataset.id %}" role="button"
-           class="btn btn-outline-info">Leaderboard 👾</a>
-        {% endif %}
-    </div>
+<div class="btn-group" role="group">
+    {% if dataset.is_user_authorised_admin %}
+    <a href="{% url 'process' dataset.id %}" role="button"
+       class="btn btn-info">Start 🚀</a>
+    {% include "partials/export_button_with_modal.html"%}
+    <!-- <a href="{% url 'fetch_dataset' dataset.id %}" role="button"
+       class="btn btn-outline-info">Fetch data ↩️</a>
+       -->
+    <a href="{% url 'update_or_create_dataset' dataset.id %}" role="button"
+       class="btn btn-outline-info">Details 🔍</a>
+    {% include "partials/invite_button_with_modal.html"%}
+    {% elif dataset.is_user_authorised_to_contribute %}
+    <a href="{% url 'process' dataset.id %}" role="button"
+       class="btn btn-info">Start 🚀</a>
+    {% endif %}
+    {% if not hide_leaderboard_link %}
+    <a href="{% url 'show_leaderboard' dataset.id %}" role="button"
+       class="btn btn-outline-info">Leaderboard 👾</a>
+    {% endif %}
 </div>

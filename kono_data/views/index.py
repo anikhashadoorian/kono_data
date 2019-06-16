@@ -23,6 +23,6 @@ class IndexView(TemplateView):
             datasets = (
                     Dataset.objects.filter(is_public=True) | user.owner_datasets.all() |
                     user.admin_datasets.all() | user.contributor_datasets.all()
-            ).distinct()
+            ).distinct().all()
         context['datasets'] = annotate_datasets_for_view(datasets, user, DATASETS_ON_INDEX_PAGE)
         return context
