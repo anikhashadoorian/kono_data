@@ -114,5 +114,9 @@ def show_leaderboard(request, **kwargs):
     dataset_id = kwargs.get('dataset')
     dataset = Dataset.objects.filter(id=dataset_id).first()
     users = dataset.get_leaderboard_users()[:USERS_VISIBLE_ON_LEADERBOARD]
-    context = {'dataset': annotate_dataset_for_view(dataset, request.user), 'users': users}
+    unique_files_compared = len(dataset.get_unique_processed_files())
+
+    context = {'dataset': annotate_dataset_for_view(dataset, request.user),
+               'users': users,
+               'unique_files_compared': unique_files_compared}
     return render(request, "leaderboard.html", context)

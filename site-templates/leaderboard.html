@@ -30,6 +30,10 @@
 </div>
 <br />
 {% include "partials/dataset.html" with hide_leaderboard_link=True%}
-
+<br />
+{% if dataset.task_type == "two_image_comparison" %}
+<div>
+    Unique files compared: {{unique_files_compared}}
 </div>
+{% endif %}
 {% endblock %}

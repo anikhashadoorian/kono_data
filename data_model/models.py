@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 from django.contrib.postgres.fields import JSONField, ArrayField
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Q, Count
+from django.db.models import Q, Count, Func, Value, F, QuerySet
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
@@ -186,6 +186,20 @@ class Dataset(models.Model):
         new_tasks = sample(all_combinations, int(nr_new_tasks))
         tasks_as_str = [f'{k1},{k2}' for k1, k2 in new_tasks]
         return tasks_as_str
+
+    def get_unique_processed_files(self):
+        tasks_with_labels = self.tasks.filter(labels__isnull=False)
+        if self.task_type == TaskType.two_image_comparison.value:
+            annotated_labels = tasks_with_labels.annotate(
+                key1=Func(F('definition'), Value(','), Value(1), function='split_part'),
+                key2=Func(F('definition'), Value(','), Value(2), function='split_part'))
+
+            unique_keys = set(annotated_labels.values_list('key1', flat=True)).union(
+                set(annotated_labels.values_list('key2', flat=True)))
+            return unique_keys
+
+        else:
+            return tasks_with_labels.all()
 
 
 class Task(models.Model):
