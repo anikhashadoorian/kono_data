@@ -17,7 +17,11 @@
         {% for task_source in task_sources %}
         <div class="col-sm-12 col-md-6">
             <div class="{% if forloop.first %}bg-info float-right{%else%}bg-warning float-left{% endif %}">
-                <span class="badge badge-pill text-center">Image {{ forloop.counter }}</span>
+                <span class="badge badge-pill">Image {{ forloop.counter }}
+                    {% if is_admin %}
+                    (<a href="{% url 'delete_file' dataset.id task_id forloop.counter0 %}">delete</a>)
+                    {% endif %}
+                </span>
                 <img src="{{ task_source }}"
                      class="border-{% if forloop.first %}info{%else%}warning{% endif %}
                      border-info border img-thumbnail img-rounded media img-responsive"

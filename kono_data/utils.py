@@ -1,6 +1,9 @@
 import logging
 import time
 from typing import Optional
+import requests
+
+import boto3
 
 from data_model.enums import TaskType, UnknownTaskTypeException
 
@@ -49,3 +52,10 @@ def timing(method):
         return result
 
     return timed
+
+
+def delete_s3_object(bucket, path):
+    s3 = boto3.client('s3')
+    resp = s3.delete_object(Bucket=bucket, Key=path)
+    status_code = resp['ResponseMetadata']['HTTPStatusCode']
+    return status_code in [200, 204]
