@@ -84,7 +84,8 @@ def get_task_context_for_view(dataset: Dataset, user: User):
     if not task:
         return context
 
-    context.update({'is_first_task': is_first_task})
+    context.update({'is_first_task': is_first_task,
+                    'is_admin': dataset.is_user_authorised_admin(user)})
     bucket = get_s3_bucket_from_str(dataset.source_uri)
     if dataset.task_type == TaskType.single_image_label.value:
         encoded_task = quote(task.definition)

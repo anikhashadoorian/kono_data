@@ -14,7 +14,7 @@
             <div class="modal-body">
                 <p>Share this link to invite others to contribute to this dataset:</p>
                 <div class="p-2 mb-2 bg-light text-dark">
-                    {{ request.build_absolute_uri }}{{dataset.id|get_invite_link_from_dataset_id|slice:"1:"}}
+                    {{ request.get_host }}/{{dataset.id|get_invite_link_from_dataset_id|slice:"1:"}}
                 </div>
             </div>
             <div class="modal-footer">

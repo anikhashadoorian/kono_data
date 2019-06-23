@@ -22,7 +22,7 @@ from django.views.generic import RedirectView
 
 from kono_data import settings
 from kono_data.views.dataset import index_dataset, export_dataset, update_or_create_dataset, \
-    fetch_dataset_from_source, show_leaderboard
+    fetch_dataset_from_source, show_leaderboard, delete_file
 from kono_data.views.index import IndexView
 from kono_data.views.process import process
 from kono_data.views.user import signup, login_url
@@ -45,6 +45,6 @@ urlpatterns = [
                   path('dataset/<uuid:dataset>/export/<str:export_type>', export_dataset, name='export_dataset'),
                   path('dataset/<uuid:dataset>/fetch', fetch_dataset_from_source, name='fetch_dataset'),
                   path('dataset/<uuid:dataset>/leaderboard', show_leaderboard, name='show_leaderboard'),
+                  path('dataset/<uuid:dataset>/delete_file/<task>/<file_index>', delete_file, name='delete_file'),
                   path('dataset/<str:type>', index_dataset, name='datasets'),
-                  url(r'^markdownx/', include('markdownx.urls'))
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
