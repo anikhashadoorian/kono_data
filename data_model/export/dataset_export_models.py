@@ -67,9 +67,9 @@ class ProcessedDatasetExport(DatasetExport):
                                f'confidence_{label}') for label in label_names]
         column_names = list(sum(label_field_tuples, ()))
 
-        annotated_labels = dataset.tasks.filter(labels__isnull=False).annotate(
-            key1=Func(F('definition'), Value(','), Value(1), function='split_part'),
-            key2=Func(F('definition'), Value(','), Value(2), function='split_part'))
+        annotated_labels = dataset.labels.annotate(
+            key1=Func(F('task__definition'), Value(','), Value(1), function='split_part'),
+            key2=Func(F('task__definition'), Value(','), Value(2), function='split_part'))
 
         unique_keys = list(dataset.get_unique_processed_files())
 
