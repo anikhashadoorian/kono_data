@@ -67,12 +67,11 @@ class ProcessedDatasetExport(DatasetExport):
                                f'confidence_{label}') for label in label_names]
         column_names = list(sum(label_field_tuples, ()))
 
-        annotated_labels = dataset.labels.annotate(
-            key1=Func(F('task'), Value(','), Value(1), function='split_part'),
-            key2=Func(F('task'), Value(','), Value(2), function='split_part'))
+        annotated_labels = dataset.tasks.filter(labels__isnull=False).annotate(
+            key1=Func(F('definition'), Value(','), Value(1), function='split_part'),
+            key2=Func(F('definition'), Value(','), Value(2), function='split_part'))
 
-        unique_keys = set(annotated_labels.values_list('key1', flat=True)
-                          ).union(set(annotated_labels.values_list('key2', flat=True)))
+        unique_keys = list(dataset.get_unique_processed_files())
 
         label_name_to_scores = {label_name: get_scores_from_labels(annotated_labels, unique_keys, label_name)
                                 for label_name in label_names}
