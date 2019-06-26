@@ -1,5 +1,4 @@
 kono_data/dev_settings.py
-kono_data/prod_settings.py
 static/*
 zappa_deploy.sh
 .DS_Store
