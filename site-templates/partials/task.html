@@ -1,0 +1,27 @@
+{% load dataset_extras %}
+{% block task %}
+<div class="col-12">
+    <a href="{% url 'show_leaderboard' task.dataset_id %}" role="button" class="btn btn-outline-info">Dataset 👾</a>
+</div>
+<br/>
+{% if task_source %}
+<div class="col-sm-12 col-md-6">
+    <img src="{{ task_source }}" class="img-thumbnail media img-responsive" alt="Responsive image"/>
+</div>
+{% endif %}
+{% for task_source in task_sources %}
+<div class="col-sm-8 col-md-4">
+    <div class="{% if forloop.first %}bg-info float-right{%else%}bg-warning float-left{% endif %}">
+        <span class="badge badge-pill">Image {{ forloop.counter }} ({{ task_source|split_slash|slice:"-2:"|join:"/" }})
+            {% if is_admin %}
+            (<a href="{% url 'delete_file' dataset.id task_id forloop.counter0 %}">delete</a>)
+            {% endif %}
+        </span>
+        <img src="{{ task_source }}"
+             class="border-{% if forloop.first %}info{%else%}warning{% endif %}
+                         border-info border img-thumbnail img-rounded media img-responsive"
+             alt="image{{ forloop.counter }}"/>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

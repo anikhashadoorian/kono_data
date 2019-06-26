@@ -25,6 +25,7 @@ from kono_data.views.dataset import index_dataset, export_dataset, update_or_cre
     fetch_dataset_from_source, show_leaderboard, delete_file
 from kono_data.views.index import IndexView
 from kono_data.views.process import process
+from kono_data.views.task import show_task
 from kono_data.views.user import signup, login_url
 
 urlpatterns = [
@@ -47,4 +48,5 @@ urlpatterns = [
                   path('dataset/<uuid:dataset>/leaderboard', show_leaderboard, name='show_leaderboard'),
                   path('dataset/<uuid:dataset>/delete_file/<task>/<file_index>', delete_file, name='delete_file'),
                   path('dataset/<str:type>', index_dataset, name='datasets'),
+                  path('task/<uuid:task>', show_task, name='task'),
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

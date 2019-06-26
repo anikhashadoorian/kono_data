@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<br/>
+<div class="container-fluid">
+    <div class="row">
+        {% include "partials/task.html" %}
+    </div>
+    <div class="row">
+        {% for label in labels%}
+        {% include "partials/label.html" %}
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
