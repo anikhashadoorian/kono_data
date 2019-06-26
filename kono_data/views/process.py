@@ -1,16 +1,16 @@
-from urllib.parse import quote
-
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
 
-from data_model.enums import TaskType, UnknownTaskTypeException, LabelActionType
+from data_model.enums import LabelActionType
 from data_model.models import Dataset, Label, Task
 from data_model.utils import get_unprocessed_task, str_to_int
 from kono_data.process_forms import task_type_to_process_form
-from kono_data.utils import get_s3_bucket_from_str, process_form_data_for_tasktype
+from kono_data.utils import process_form_data_for_tasktype
 
 import logging
+
+from kono_data.views.views_utils import get_view_context_for_task
 
 logger = logging.getLogger(__name__)
 
@@ -73,11 +73,11 @@ def process(request, **kwargs):
                           f'Dataset "{dataset}" has no tasks. Ask your admin to fetch data to start processing')
             return redirect("index")
 
-    context.update(get_task_context_for_view(dataset, user))
+    context.update(get_context_for_process_view(dataset, user))
     return render(request, "process.html", context)
 
 
-def get_task_context_for_view(dataset: Dataset, user: User):
+def get_context_for_process_view(dataset: Dataset, user: User):
     context = {'partial_name': 'partials/process_' + dataset.task_type + '.html',
                'dataset': dataset}
     task, is_first_task = get_unprocessed_task(user, dataset)
@@ -86,17 +86,7 @@ def get_task_context_for_view(dataset: Dataset, user: User):
 
     context.update({'is_first_task': is_first_task,
                     'is_admin': dataset.is_user_authorised_admin(user)})
-    bucket = get_s3_bucket_from_str(dataset.source_uri)
-    if dataset.task_type == TaskType.single_image_label.value:
-        encoded_task = quote(task.definition)
-        context.update({'task': encoded_task,
-                        'task_id': task.id,
-                        'task_source': f'https://s3-{dataset.source_region}.amazonaws.com/{bucket}/{encoded_task}'})
-    elif dataset.task_type == TaskType.two_image_comparison.value:
-        context.update({'task': task.definition, 'task_id': task.id,
-                        'task_sources': [f'https://s3-{dataset.source_region}.amazonaws.com/{bucket}/{quote(t)}'
-                                         for t in task.definition.split(',')]})
-    else:
-        raise UnknownTaskTypeException()
-
+    context.update(get_view_context_for_task(task))
     return context
+
+
