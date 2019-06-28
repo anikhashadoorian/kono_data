@@ -47,10 +47,6 @@ DEBUG = True
 ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
-    'admin_tools',
-    'admin_tools.theming',
-    'admin_tools.menu',
-    'admin_tools.dashboard',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -59,6 +55,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'storages',
+    'graphene_django',
     'bootstrap4',
     'markdownx',
     'markdownify',
@@ -78,6 +75,10 @@ MIDDLEWARE = [
     'account.middleware.TimezoneMiddleware',
     'bugsnag.django.middleware.BugsnagMiddleware',
 ]
+
+GRAPHENE = {
+    'SCHEMA': 'data_model.schema.schema'  # Where Graphene schema lives
+}
 
 ROOT_URLCONF = 'kono_data.urls'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
@@ -99,7 +100,6 @@ TEMPLATES = [
             'loaders': [
                 'django.template.loaders.filesystem.Loader',
                 'django.template.loaders.app_directories.Loader',
-                'admin_tools.template_loaders.Loader'
             ],
             'builtins': [
                 'django.contrib.staticfiles.templatetags.staticfiles',
@@ -149,9 +149,6 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
 STATIC_URL = '/static/'
-ADMIN_TOOLS_MENU = 'kono_data.menu.CustomMenu'
-ADMIN_TOOLS_INDEX_DASHBOARD = 'kono_data.dashboard.CustomIndexDashboard'
-ADMIN_TOOLS_APP_INDEX_DASHBOARD = 'kono_data.dashboard.CustomAppIndexDashboard'
 
 SITE_ID = 1
 
@@ -186,6 +183,6 @@ DATASETS_ON_INDEX_PAGE = 5
 if os.environ.get('ENV') == 'PROD':
     from kono_data.prod_settings import *
 elif os.environ.get('ENV') == 'TEST':
-    from kono_data.test_settings import *
+    pass
 else:
-    from kono_data.dev_settings import *
+    pass

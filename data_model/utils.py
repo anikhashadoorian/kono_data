@@ -1,10 +1,9 @@
 from typing import Optional, Tuple
 
 from django.contrib.auth.models import User
-from django.db.models import F, Count, QuerySet, Q, When, BooleanField, Case
+from django.db.models import F, QuerySet, Q, When, BooleanField, Case
 
 from data_model.models import Dataset, Task
-
 from kono_data.utils import timing
 
 
@@ -58,15 +57,12 @@ def annotate_dataset_for_view(dataset: Dataset, user: User = None):
 
 
 def get_unprocessed_tasks(user: User, dataset: Dataset, n: int) -> QuerySet:
-    if user.is_anonymous:
-        return dataset.tasks.all()[:n]
-
-    return dataset.tasks.filter(labels__isnull=True).all()[:n]
+    return dataset.tasks.filter(labels__isnull=True).order_by('?')[:n]
 
 
 def get_unprocessed_task(user: User, dataset: Dataset) -> Tuple[Task, bool]:
     unprocessed_tasks = get_unprocessed_tasks(user, dataset, n=1)
-    unprocessed_task = unprocessed_tasks[0] if unprocessed_tasks.exists() else None
+    unprocessed_task = unprocessed_tasks[0] if unprocessed_tasks else None
     is_first_task = False if user.is_anonymous else not user.labels.filter(dataset=dataset).exists()
     return unprocessed_task, is_first_task
 
