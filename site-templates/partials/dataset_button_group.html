@@ -3,9 +3,6 @@
     <a href="{% url 'process' dataset.id %}" role="button"
        class="btn btn-info">Start 🚀</a>
     {% include "partials/export_button_with_modal.html"%}
-    <!-- <a href="{% url 'fetch_dataset' dataset.id %}" role="button"
-       class="btn btn-outline-info">Fetch data ↩️</a>
-       -->
     <a href="{% url 'update_or_create_dataset' dataset.id %}" role="button"
        class="btn btn-outline-info">Details 🔍</a>
     {% include "partials/invite_button_with_modal.html"%}

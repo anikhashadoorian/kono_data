@@ -1,15 +1,16 @@
 import logging
 import uuid
-from typing import List
 from itertools import combinations
 from random import sample
+from typing import List, Collection
+
 import boto3
 from botocore.exceptions import ClientError, ParamValidationError
 from django.contrib.auth.models import User
 from django.contrib.postgres.fields import JSONField, ArrayField
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Q, Count, Func, Value, F, QuerySet
+from django.db.models import Q, Count, Func, Value, F
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
@@ -18,7 +19,7 @@ from markdownx.models import MarkdownxField
 from data_model.enums import AwsRegionType, TaskType, LabelActionType
 from data_model.model_utils import generate_invite_key
 from kono_data.const import S3_ARN_PREFIX
-from kono_data.utils import get_s3_bucket_from_str
+from kono_data.utils import get_s3_bucket_from_str, delete_s3_object
 
 logger = logging.getLogger(__name__)
 
@@ -84,6 +85,52 @@ class Dataset(models.Model):
 
         super(Dataset, self).save(*args, **kwargs)
 
+    def clean_keys_from_source(self):
+        bucket_name = get_s3_bucket_from_str(str(self.source_uri))
+        s3_bucket = boto3.resource('s3').Bucket(bucket_name)
+        removed_keys = []
+
+        for key in self.keys:
+            should_delete_key = False
+            try:
+                file_size = s3_bucket.Object(key).content_length
+                if file_size == 0:
+                    should_delete_key = True
+            except ClientError as e:
+                error_code = int(e.response['Error']['Code'])
+                if error_code == 404:
+                    should_delete_key = True
+                else:
+                    logger.warning(f'Cleaning dataset {self.id} - received error {e}')
+
+            if should_delete_key:
+                self.delete_key_from_dataset(key)
+                removed_keys.append(key)
+
+        logger.info(f'Removed {len(removed_keys)} keys')
+        self.keys = list(set(self.keys) - set(removed_keys))
+        self.save()
+
+    def delete_key_from_dataset(self, key):
+        bucket_name = get_s3_bucket_from_str(str(self.source_uri))
+        is_deleted = delete_s3_object(bucket_name, key)
+
+        if not is_deleted:
+            return 'Could not delete file', None, None
+
+        tasks_with_deleted_file = self.tasks.filter(definition__contains=key)
+        task_ids_with_deleted_file = tasks_with_deleted_file.values_list("id", flat=True)
+        labels_for_tasks_with_deleted_file = Label.objects.filter(task_id__in=task_ids_with_deleted_file)
+
+        task_count = tasks_with_deleted_file.count()
+        label_count = labels_for_tasks_with_deleted_file.count()
+
+        labels_for_tasks_with_deleted_file.delete()
+        tasks_with_deleted_file.delete()
+
+        logger.info(f'Removed key {key} in S3, {task_count} tasks and {label_count} labels')
+        return None, task_count, label_count
+
     def fetch_keys_from_source(self):
         bucket_name = get_s3_bucket_from_str(str(self.source_uri))
         s3 = boto3.client('s3')
@@ -100,7 +147,8 @@ class Dataset(models.Model):
 
         self.keys = keys
         if self.task_type == TaskType.two_image_comparison.value:
-            prev_task_definitions = set(self.tasks.values_list('definition', flat=True))
+            prev_tasks_with_labels = self.tasks.filter(label__isnull=False)
+            prev_task_definitions = set(prev_tasks_with_labels.values_list('definition', flat=True))
             task_definitions = self.get_task_definitions_from_keys(keys=keys,
                                                                    prev_task_definitions=prev_task_definitions)
 
@@ -111,7 +159,7 @@ class Dataset(models.Model):
         Task.objects.bulk_create([
             Task(dataset=self, definition=definition) for definition in task_definitions
         ])
-        logger.info(f'Done createing {len(task_definitions)} tasks')
+        logger.info(f'Done creating {len(task_definitions)} tasks')
         self.save()
 
     @property
@@ -151,12 +199,13 @@ class Dataset(models.Model):
     def invite_link(self):
         return reverse('signup_with_invite', args=[str(self.invite_key)])
 
-    def get_task_definitions_from_keys(self, keys: List[str],
-                                       prev_task_definitions: List[str] = None,
+    @staticmethod
+    def get_task_definitions_from_keys(keys: List[str],
+                                       prev_task_definitions: Collection[str] = None,
                                        ratio: float = 0.1, max_nr_tasks: int = 500000) -> List[str]:
         """
         :param keys: list of keys to be compared to each other
-        :param prev_tasks: list of previous tasks that should not be removed in new calculation
+        :param prev_task_definitions: list of previous tasks that should not be removed in new calculation
         :param ratio: ratio of comparison tasks to be opened for each key to all others.
                     1 means every key with all other keys
         :param max_nr_tasks: max number of tasks that can be returned.

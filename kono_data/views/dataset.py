@@ -1,6 +1,5 @@
 import tempfile
 
-import boto3
 from django.contrib import messages
 from django.db.models import Q
 from django.http import HttpResponse
@@ -8,11 +7,11 @@ from django.shortcuts import render, redirect
 from django.utils.text import slugify
 
 from data_model.export.dataset_export_models import RawDatasetExport, ProcessedDatasetExport, DatasetExport
-from data_model.models import Dataset, Label
+from data_model.models import Dataset
 from data_model.utils import annotate_datasets_for_view, annotate_dataset_for_view
 from kono_data.forms import DatasetForm
 from kono_data.settings import USERS_VISIBLE_ON_LEADERBOARD
-from kono_data.utils import timing, get_s3_bucket_from_str, delete_s3_object
+from kono_data.utils import timing
 
 
 @timing
@@ -43,6 +42,20 @@ def update_or_create_dataset(request, **kwargs):
     context = {'form': form, 'dataset': dataset,
                'is_edit': dataset_id is not None}
     return render(request, "create_dataset.html", context)
+
+
+@timing
+def clean_dataset(request, **kwargs):
+    dataset_id = kwargs.get('dataset')
+    dataset = Dataset.objects.filter(id=dataset_id).first()
+
+    if dataset.is_user_authorised_admin(request.user):
+        dataset.clean_keys_from_source()
+        messages.success(request, 'Dataset updated successfully! 🎉')
+        return redirect('update_or_create_dataset', dataset=dataset_id)
+    else:
+        messages.error(request, 'You\'re not authorized to edit this dataset =(')
+        return redirect('index')
 
 
 @timing
@@ -143,23 +156,11 @@ def delete_file(request, **kwargs):
         messages.error(request, f'Wrong file_index')
         return redirect('process', dataset=dataset_id)
 
-    filename = task.definition.split(',').pop(file_index)
-    bucket_name = get_s3_bucket_from_str(str(dataset.source_uri))
-    is_deleted = delete_s3_object(bucket_name, filename)
-
-    if not is_deleted:
-        messages.error(request, 'Could not delete file')
-        return redirect('process', dataset=dataset_id)
-
-    tasks_with_deleted_file = dataset.tasks.filter(definition__contains=filename)
-    task_ids_with_deleted_file = tasks_with_deleted_file.values_list("id", flat=True)
-    labels_for_tasks_with_deleted_file = Label.objects.filter(task_id__in=task_ids_with_deleted_file)
-
-    task_count = tasks_with_deleted_file.count()
-    label_count = labels_for_tasks_with_deleted_file.count()
-
-    labels_for_tasks_with_deleted_file.delete()
-    tasks_with_deleted_file.delete()
+    key = task.definition.split(',').pop(file_index)
+    error_msg, task_count, label_count = dataset.delete_key_from_dataset(key)
+    if error_msg:
+        messages.error(request, error_msg)
+        return redirect('process', dataset=dataset.id)
 
     messages.success(request, f'Removed file in S3, {task_count} tasks and {label_count} labels')
     return redirect('process', dataset=dataset_id)
