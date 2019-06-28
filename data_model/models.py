@@ -147,7 +147,7 @@ class Dataset(models.Model):
 
         self.keys = keys
         if self.task_type == TaskType.two_image_comparison.value:
-            prev_tasks_with_labels = self.tasks.filter(label__isnull=False)
+            prev_tasks_with_labels = self.tasks.filter(labels__isnull=False)
             prev_task_definitions = set(prev_tasks_with_labels.values_list('definition', flat=True))
             task_definitions = self.get_task_definitions_from_keys(keys=keys,
                                                                    prev_task_definitions=prev_task_definitions)
@@ -202,7 +202,7 @@ class Dataset(models.Model):
     @staticmethod
     def get_task_definitions_from_keys(keys: List[str],
                                        prev_task_definitions: Collection[str] = None,
-                                       ratio: float = 0.1, max_nr_tasks: int = 500000) -> List[str]:
+                                       ratio: float = 0.01, max_nr_tasks: int = 50000) -> List[str]:
         """
         :param keys: list of keys to be compared to each other
         :param prev_task_definitions: list of previous tasks that should not be removed in new calculation

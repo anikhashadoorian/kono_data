@@ -17,8 +17,9 @@ from django.conf.urls import url
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth.views import LogoutView
-from django.urls import path, include, reverse_lazy
+from django.urls import path, reverse_lazy
 from django.views.generic import RedirectView
+from graphene_django.views import GraphQLView
 
 from kono_data import settings
 from kono_data.views.dataset import index_dataset, export_dataset, update_or_create_dataset, \
@@ -37,7 +38,6 @@ urlpatterns = [
                        name='login_with_invite'),
                   url(r'^accounts/profile/$', RedirectView.as_view(url=reverse_lazy('index'))),
                   url(r'^accounts/$', RedirectView.as_view(url='/')),
-                  url(r'^admin_tools/', include('admin_tools.urls')),
                   path('admin/', admin.site.urls),
                   path('', IndexView.as_view(), name='index'),
                   path('process/<uuid:dataset>', process, name='process'),
@@ -50,4 +50,6 @@ urlpatterns = [
                   path('dataset/<uuid:dataset>/delete_file/<task>/<file_index>', delete_file, name='delete_file'),
                   path('dataset/<str:type>', index_dataset, name='datasets'),
                   path('task/<uuid:task>', show_task, name='task'),
+                  url(r'^graphql$', GraphQLView.as_view()),
+                  url(r'^graphiql$', GraphQLView.as_view(graphiql=True)),
               ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
