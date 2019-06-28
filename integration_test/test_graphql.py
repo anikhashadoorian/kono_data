@@ -8,6 +8,6 @@ class GraphqlTestCase(BaseIntegrationTestCase):
         self.client = Client()
 
     def test_getGraphiqlEndpoint_statusCode200(self):
-        response = self.client.get('//graphiql#query=')
+        response = self.client.get('/graphiql#query=')
 
         self.assertEqual(response.status_code, 200)
