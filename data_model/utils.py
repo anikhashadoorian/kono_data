@@ -6,6 +6,7 @@ from django.db.models import F, QuerySet, Q, When, BooleanField, Case
 from data_model.models import Dataset, Task
 from kono_data.utils import timing
 
+import base64
 
 @timing
 def fetch_qs(qs):
@@ -78,3 +79,7 @@ def str_to_int(s):
         return int(s)
     except ValueError:
         return int(float(s))
+
+
+def base64encode(s: str):
+    return base64.b64encode(bytearray(s, 'utf-8')).decode()
