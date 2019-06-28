@@ -1,0 +1,11 @@
+{% block label %}
+<div class="row col-md-12">
+    <div class="row">
+        {% for key, value in label.data.items %}
+        {{ key }}: {{ value }}<br/>
+        {% endfor %}
+        {{label.action}} by {{label.user}}
+    </div>
+    <br/>
+</div>
+{% endblock %}

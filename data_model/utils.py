@@ -30,7 +30,7 @@ def annotate_datasets_for_view(datasets: QuerySet, user: Optional[User] = None, 
                     default=False, output_field=BooleanField()))
             annotated = annotated.annotate(
                 is_user_authorised_to_contribute=Case(
-                    When(Q(is_public=False) & Q(is_user_authorised_admin=False) & Q(contributors__id=user.id),
+                    When(Q(is_public=False) & Q(is_user_authorised_admin=False) & ~Q(contributors__id=user.id),
                          then=False), default=True, output_field=BooleanField()))
             annotated_fields += ['is_user_authorised_admin', 'is_user_authorised_to_contribute']
 
