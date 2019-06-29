@@ -4,6 +4,7 @@ from typing import Dict
 from trueskill import TrueSkill, rate_1vs1, Rating
 
 from data_model.enums import LabelActionType
+from kono_data.utils import timing
 
 RATING_REPETITION_TARGET = 12  # TrueSkill documentation mentions 12 as nr. of iterations for convergence
 
@@ -17,15 +18,24 @@ def get_scores_from_labels(labels, keys, label_name, normalise=True) -> Dict[str
     key_to_rating_score_dict = {key: RatingScore(rating, rating_env.expose(rating), 0) for key, rating in
                                 key_to_rating_dict.items()}
     if normalise:
+        # set negative scores to 0
+        key_to_rating_score_dict = {
+            key: rating._replace(score=rating.score if rating.score >= 0 else 0)
+            for key, rating in key_to_rating_score_dict.items()
+        }
+
+        # normalise
         scores = [kr.score for kr in key_to_rating_score_dict.values()]
         max_score, min_score = max(scores), min(scores)
-        key_to_rating_score_dict = {key: rating._replace(normalised_score=
-                                                         normalise_value(rating.score, max_score, min_score))
-                                    for key, rating in key_to_rating_score_dict.items()}
+        key_to_rating_score_dict = {
+            key: rating._replace(normalised_score=normalise_value(rating.score, max_score, min_score))
+            for key, rating in key_to_rating_score_dict.items()
+        }
 
     return key_to_rating_score_dict
 
 
+@timing
 def get_ratings_from_labels(labels, keys, label_name, rating_env,
                             repetition_count=RATING_REPETITION_TARGET) -> Dict[str, Rating]:
     key_to_rating_dict = init_key_to_rating_score_dict(keys, rating_env)

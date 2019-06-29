@@ -8,6 +8,7 @@ from kono_data.utils import timing
 
 import base64
 
+
 @timing
 def fetch_qs(qs):
     return qs.all()
