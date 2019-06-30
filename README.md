@@ -31,8 +31,20 @@ One or all labels can be selected. If you click _Save_ or hit enter your input i
 ## [FAQ](FAQ.md)
   
 ## Installation
+### Python
 This app is written in Python 3 and based on [Django](https://www.djangoproject.com/).
 Python requirements are listed in the ```requirements.txt``` and can be installed with ```pip install --upgrade -r requirements.txt```. 
+### JS (initial setup, you should not need to do this)
+1. Install NVM (node package manager): `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.34.0/install.sh | bash`
+2. Install nodejs 10.16.0 `nvm install 10.16.0`
+3. Install Angular `npm install @angular/cli`
+4. Install Ionic framework `npm install -g ionic`
+5. `npm install apollo-client apollo-angular graphql-tag graphql apollo-link-http apollo-cache-inmemory --save`
+
+## Running it locally
+1. Run django backend `python manage.py runserver`
+2. Run angular frontend `ng build --prod --output-path <BACKEND_PROJECT_PATH>/kono_data/static/ang --watch --output-hashing none`
+3. Enjoy!
 
 ## Contribute
 You're encouraged to contribute to kono data! 

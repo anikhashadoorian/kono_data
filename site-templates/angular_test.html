@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon"
+          href="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/60/apple/155/shinto-shrine_26e9.png">
+    <title>kono data</title>
+    <link rel="stylesheet" href="{% static 'ang/styles.css' %}">
+    {% load static %}
+</head>
+<body>
+{% load static %}
+<app-root>Loading...</app-root>
+<script type="text/javascript" src="{% static 'ang/runtime.js' %}"></script>
+<script type="text/javascript" src="{% static 'ang/polyfills.js' %}"></script>
+<script type="text/javascript" src="{% static 'ang/main.js' %}"></script>
+<div class="row">
+    <div class="card" *ngFor="let dataset of datasets">
+        <h4>{{ dataset.title }}</h4>
+    </div>
+</div>
+</body>
+</html>

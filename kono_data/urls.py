@@ -18,7 +18,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth.views import LogoutView
 from django.urls import path, reverse_lazy
-from django.views.generic import RedirectView
+from django.views.generic import RedirectView, TemplateView
 from graphene_django.views import GraphQLView
 
 from kono_data import settings
@@ -52,4 +52,8 @@ urlpatterns = [
                   path('task/<uuid:task>', show_task, name='task'),
                   url(r'^graphql$', GraphQLView.as_view()),
                   url(r'^graphiql$', GraphQLView.as_view(graphiql=True)),
-              ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    url(r'^angular_test', TemplateView.as_view(template_name="angular_test.html"), name="angular_test")
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

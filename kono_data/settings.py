@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'storages',
@@ -74,6 +75,7 @@ MIDDLEWARE = [
     'account.middleware.LocaleMiddleware',
     'account.middleware.TimezoneMiddleware',
     'bugsnag.django.middleware.BugsnagMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 GRAPHENE = {
@@ -83,6 +85,8 @@ GRAPHENE = {
 ROOT_URLCONF = 'kono_data.urls'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'site-templates/'), ]
 
 TEMPLATES = [
@@ -148,8 +152,6 @@ USE_TZ = True
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
-STATIC_URL = '/static/'
-
 SITE_ID = 1
 
 # view settings
@@ -180,9 +182,10 @@ MARKDOWNIFY_WHITELIST_ATTRS = [
 USERS_VISIBLE_ON_LEADERBOARD = 10
 DATASETS_ON_INDEX_PAGE = 5
 
+
 if os.environ.get('ENV') == 'PROD':
     from kono_data.prod_settings import *
 elif os.environ.get('ENV') == 'TEST':
-    from kono_data.test_settings import *
+    from kono_data.test_settings import *  # noqa
 else:
-    from kono_data.dev_settings import *
+    from kono_data.dev_settings import *  # noqa
