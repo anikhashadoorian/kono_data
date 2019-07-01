@@ -8,8 +8,11 @@
     "s3_bucket": "konodata-prod",
     "timeout_seconds": 300,
     "memory_size": 2048,
+    "slim_handler": true,
     "exclude": [
-      "node_modules/"
+      "node_modules/*",
+      "kono-data-frontend",
+      "kono-data-frontend/*"
     ]
   }
 }

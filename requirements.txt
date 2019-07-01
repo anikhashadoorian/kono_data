@@ -1,3 +1,4 @@
+aniso8601==6.0.0
 argcomplete==1.9.3
 astroid==2.0.4
 base58==1.0.3
@@ -14,16 +15,18 @@ coverage==4.5.3
 Django==2.1.9
 django-appconf==1.0.2
 django-bootstrap4==0.0.6
+django-filter==2.1.0
 django-markdownify==0.8.0
 django-markdownx==2.0.28
 django-storages==1.7.1
 django-user-accounts==2.0.3
-django-filter==2.1.0
 docutils==0.14
 durationpy==0.5
 future==0.16.0
 graphene==2.1.6
-graphene_django==2.3.2
+graphene-django==2.3.2
+graphql-core==2.2
+graphql-relay==0.4.5
 hjson==3.0.1
 html5lib==1.0.1
 idna==2.6
@@ -36,6 +39,7 @@ Markdown==3.0.1
 mccabe==0.6.1
 Pillow==6.0.0
 placebo==0.9.0
+promise==2.2.1
 psycopg2==2.7.4
 psycopg2-binary==2.7.4
 pylint==2.1.1
@@ -44,7 +48,9 @@ python-slugify==1.2.4
 pytz==2018.7
 PyYAML==4.2b1
 requests==2.20.1
+Rx==1.6.1
 s3transfer==0.2.1
+singledispatch==3.4.0.3
 six==1.11.0
 standardjson==0.3.1
 toml==0.10.0
