@@ -65,7 +65,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -75,7 +74,6 @@ MIDDLEWARE = [
     'account.middleware.LocaleMiddleware',
     'account.middleware.TimezoneMiddleware',
     'bugsnag.django.middleware.BugsnagMiddleware',
-    'spa.middleware.SPAMiddleware',
 ]
 
 GRAPHENE = {
@@ -85,7 +83,6 @@ GRAPHENE = {
 ROOT_URLCONF = 'kono_data.urls'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
-STATICFILES_STORAGE = 'spa.storage.SPAStaticFilesStorage'
 TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'site-templates/'), ]
 
 TEMPLATES = [
