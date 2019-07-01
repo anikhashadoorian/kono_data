@@ -1,4 +1,5 @@
 kono_data/dev_settings.py
+data_model/ionic/*
 static/*
 zappa_deploy.sh
 .DS_Store
