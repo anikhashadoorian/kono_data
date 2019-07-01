@@ -24,8 +24,9 @@ script:
   - coverage run manage.py test
 after_success:
   - coverage report --omit=/home/
-  - coverage xml
-  - python-codacy-coverage -r coverage.xml
+  - npm i -g npm@9.11.2
+  - npm install -g ionic
+  - ./build_ionic.sh
   - zappa update prod
   - zappa manage prod migrate
   - zappa manage prod "collectstatic --noinput"
