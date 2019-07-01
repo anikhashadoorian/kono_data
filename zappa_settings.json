@@ -7,6 +7,7 @@
     "remote_env": "s3://konodata-prod/config_prod.json",
     "s3_bucket": "konodata-prod",
     "timeout_seconds": 300,
-    "memory_size": 2048
+    "memory_size": 2048,
+    "slim_handler": true
   }
 }
