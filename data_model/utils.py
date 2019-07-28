@@ -70,8 +70,7 @@ def get_unprocessed_tasks(user: User, dataset: Dataset, n: int) -> QuerySet:
     definitions_of_tasks_without_labels = annotated_qs.filter(labels__isnull=True).values_list('file1', 'file2')
     files_in_tasks_without_labels = list(itertools.chain.from_iterable(list(definitions_of_tasks_without_labels)))
 
-    tasks_with_unlabeled_files = annotated_qs. \
-        filter(file1__in=files_in_tasks_without_labels, file2__in=files_in_tasks_without_labels)
+    tasks_with_unlabeled_files = annotated_qs.filter(file1__in=files_in_tasks_without_labels)
 
     if tasks_with_unlabeled_files.exists():
         return tasks_with_unlabeled_files.order_by('?')[:n]
