@@ -1,12 +1,13 @@
+import base64
+import itertools
 from typing import Optional, Tuple
 
 from django.contrib.auth.models import User
-from django.db.models import F, QuerySet, Q, When, BooleanField, Case
+from django.db.models import F, QuerySet, Q, When, BooleanField, Case, Value, Func
 
+from data_model.enums import TaskType
 from data_model.models import Dataset, Task
 from kono_data.utils import timing
-
-import base64
 
 
 @timing
@@ -58,8 +59,24 @@ def annotate_dataset_for_view(dataset: Dataset, user: User = None):
     return dataset
 
 
+@timing
 def get_unprocessed_tasks(user: User, dataset: Dataset, n: int) -> QuerySet:
-    return dataset.tasks.filter(labels__isnull=True).order_by('?')[:n]
+    if dataset.task_type != TaskType.two_image_comparison.value:
+        return dataset.tasks.filter(labels__isnull=True).order_by('?')[:n]
+
+    annotated_qs = dataset.tasks.annotate(file1=Func(F('definition'), Value(','), Value(1), function='split_part'),
+                                          file2=Func(F('definition'), Value(','), Value(2), function='split_part'))
+
+    definitions_of_tasks_without_labels = annotated_qs.filter(labels__isnull=True).values_list('file1', 'file2')
+    files_in_tasks_without_labels = list(itertools.chain.from_iterable(list(definitions_of_tasks_without_labels)))
+
+    tasks_with_unlabeled_files = annotated_qs. \
+        filter(file1__in=files_in_tasks_without_labels, file2__in=files_in_tasks_without_labels)
+
+    if tasks_with_unlabeled_files.exists():
+        return tasks_with_unlabeled_files.order_by('?')[:n]
+    else:
+        return dataset.tasks.filter(labels__isnull=True).order_by('?')[:n]
 
 
 def get_unprocessed_task(user: User, dataset: Dataset) -> Tuple[Task, bool]:

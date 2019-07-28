@@ -6,7 +6,7 @@ from trueskill import TrueSkill, rate_1vs1, Rating
 from data_model.enums import LabelActionType
 from kono_data.utils import timing
 
-RATING_REPETITION_TARGET = 12  # TrueSkill documentation mentions 12 as nr. of iterations for convergence
+RATING_REPETITION_TARGET = 15  # 12  # TrueSkill documentation mentions 12 as nr. of iterations for convergence
 
 RatingScore = namedtuple('RatingScore', ['rating', 'score', 'normalised_score'])
 
