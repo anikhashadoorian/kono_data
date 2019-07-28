@@ -29,7 +29,7 @@ after_success:
   - npm install -g ionic
   - cd kono-data-frontend
   - npm install
-  - ionic build --prod -- --base-href /static/ionic/
+  - ionic build --prod -- --base-href /ionic/
   - rm -rf ../data_model/static/ionic/
   - mkdir ../data_model/static/ionic/
   - cp -rf www/* ../data_model/static/ionic/
