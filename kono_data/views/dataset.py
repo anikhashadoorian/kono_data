@@ -132,7 +132,8 @@ def show_leaderboard(request, **kwargs):
 
     context = {'dataset': annotate_dataset_for_view(dataset, request.user),
                'users': users,
-               'unique_files_compared': unique_files_compared}
+               'unique_files_compared': unique_files_compared,
+               'total_files': len(dataset.keys)}
     return render(request, "leaderboard.html", context)
 
 
