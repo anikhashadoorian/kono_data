@@ -41,6 +41,7 @@ urlpatterns = [
                   path('admin/', admin.site.urls),
                   path('', IndexView.as_view(), name='index'),
                   path('process/<uuid:dataset>', process, name='process'),
+                  path('process/<uuid:dataset>/<uuid:task>', process, name='process_with_task'),
                   path('dataset/create/', update_or_create_dataset, name='update_or_create_dataset'),
                   path('dataset/<uuid:dataset>', update_or_create_dataset, name='update_or_create_dataset'),
                   path('dataset/<uuid:dataset>/export/<str:export_type>', export_dataset, name='export_dataset'),

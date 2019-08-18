@@ -1,3 +1,6 @@
+import logging
+from typing import Optional
+
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.shortcuts import redirect, render
@@ -7,9 +10,6 @@ from data_model.models import Dataset, Label, Task
 from data_model.utils import get_unprocessed_task, str_to_int
 from kono_data.process_forms import task_type_to_process_form
 from kono_data.utils import process_form_data_for_tasktype
-
-import logging
-
 from kono_data.views.views_utils import get_view_context_for_task
 
 logger = logging.getLogger(__name__)
@@ -73,14 +73,20 @@ def process(request, **kwargs):
                           f'Dataset "{dataset}" has no tasks. Ask your admin to fetch data to start processing')
             return redirect("index")
 
-    context.update(get_context_for_process_view(dataset, user))
+    task_id = kwargs.get('task')
+    task = Task.objects.filter(id=task_id).first()
+    context.update(get_context_for_process_view(dataset, user, task))
     return render(request, "process.html", context)
 
 
-def get_context_for_process_view(dataset: Dataset, user: User):
+def get_context_for_process_view(dataset: Dataset, user: User, task: Optional[Task]):
     context = {'partial_name': 'partials/process_' + dataset.task_type + '.html',
                'dataset': dataset}
-    task, is_first_task = get_unprocessed_task(user, dataset)
+
+    is_first_task = False if user.is_anonymous else not user.labels.filter(dataset=dataset).exists()
+    if not task:
+        task = get_unprocessed_task(user, dataset)
+
     if not task:
         return context
 
@@ -88,5 +94,3 @@ def get_context_for_process_view(dataset: Dataset, user: User):
                     'is_admin': dataset.is_user_authorised_admin(user)})
     context.update(get_view_context_for_task(task))
     return context
-
-

@@ -80,9 +80,7 @@ def get_unprocessed_tasks(user: User, dataset: Dataset, n: int) -> QuerySet:
 
 def get_unprocessed_task(user: User, dataset: Dataset) -> Tuple[Task, bool]:
     unprocessed_tasks = get_unprocessed_tasks(user, dataset, n=1)
-    unprocessed_task = unprocessed_tasks[0] if unprocessed_tasks else None
-    is_first_task = False if user.is_anonymous else not user.labels.filter(dataset=dataset).exists()
-    return unprocessed_task, is_first_task
+    return unprocessed_tasks[0] if unprocessed_tasks else None
 
 
 def get_dataset_from_invite_key(invite_key):

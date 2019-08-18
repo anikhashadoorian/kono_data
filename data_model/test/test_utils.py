@@ -8,10 +8,9 @@ class UtilsTestCase(BaseTestCase):
         dataset = self.generate_dataset()
         self.generate_task(dataset=dataset)
 
-        unprocessed_task, is_first_task = get_unprocessed_task(user, dataset)
+        unprocessed_task = get_unprocessed_task(user, dataset)
 
         self.assertIsNotNone(unprocessed_task)
-        self.assertTrue(is_first_task)
 
     def test_getUnprocessedTask_activeUserAndDatasetGiven_unprocessedTaskAndIsFirstTaskFalseReturned(self):
         user = self.generate_user()
@@ -19,9 +18,8 @@ class UtilsTestCase(BaseTestCase):
         self.generate_task(dataset=dataset)
         self.generate_label(user, dataset)
 
-        unprocessed_task, is_first_task = get_unprocessed_task(user, dataset)
+        unprocessed_task = get_unprocessed_task(user, dataset)
 
         self.assertIsNotNone(unprocessed_task)
-        self.assertFalse(is_first_task)
 
 
