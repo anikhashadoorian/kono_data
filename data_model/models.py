@@ -202,7 +202,7 @@ class Dataset(models.Model):
     @staticmethod
     def get_task_definitions_from_keys(keys: List[str],
                                        prev_task_definitions: Collection[str] = None,
-                                       ratio: float = 0.01, max_nr_tasks: int = 50000) -> List[str]:
+                                       ratio: float = 0.01, max_nr_tasks: int = 20000) -> List[str]:
         """
         :param keys: list of keys to be compared to each other
         :param prev_task_definitions: list of previous tasks that should not be removed in new calculation
