@@ -15,6 +15,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.urls import reverse
 from markdownx.models import MarkdownxField
+from collections import Counter
 
 from data_model.enums import AwsRegionType, TaskType, LabelActionType
 from data_model.model_utils import generate_invite_key
@@ -236,17 +237,19 @@ class Dataset(models.Model):
         tasks_as_str = [f'{k1},{k2}' for k1, k2 in new_tasks]
         return tasks_as_str
 
-    def get_unique_processed_files(self):
+    def get_unique_processed_files(self, min_nr_labels_per_key: int = 2):
         tasks_with_labels = self.tasks.filter(labels__isnull=False)
         if self.task_type == TaskType.two_image_comparison.value:
             annotated_labels = tasks_with_labels.annotate(
                 key1=Func(F('definition'), Value(','), Value(1), function='split_part'),
                 key2=Func(F('definition'), Value(','), Value(2), function='split_part'))
 
-            unique_keys = set(annotated_labels.values_list('key1', flat=True)).union(
-                set(annotated_labels.values_list('key2', flat=True)))
-            return unique_keys
-
+            unique_keys = list(annotated_labels.values_list('key1', flat=True)) + \
+                          list(annotated_labels.values_list('key2', flat=True))
+            if min_nr_labels_per_key:
+                key_counter = Counter(unique_keys)
+                unique_keys = [k for k, v in key_counter.items() if v > min_nr_labels_per_key]
+            return set(unique_keys)
         else:
             return tasks_with_labels.all()
 

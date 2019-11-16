@@ -19,7 +19,6 @@ def namedtuplefetchall(cursor):
 
 
 class Command(BaseCommand):
-    help = 'Closes the specified poll for voting'
     DEFAULT_TASKS_PER_FILE_TO_KEEP = 30
     DEFAULT_REMOVAL_ITERATIONS = 1
 
@@ -83,7 +82,7 @@ class Command(BaseCommand):
         cursor.execute(query)
         return namedtuplefetchall(cursor)
 
-    def get_task_counts_for_files_sql_query(self, dataset_id, limit=15):
+    def get_task_counts_for_files_sql_query(self, dataset_id, limit=10):
         query = '''
                 select 
                     file
