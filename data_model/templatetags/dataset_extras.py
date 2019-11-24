@@ -13,3 +13,9 @@ def get_invite_link_from_dataset_id(dataset_id):
 @register.filter(name='split_slash')
 def split_slash(value):
     return value.split('/')
+
+
+@register.filter(name='dict_key')
+def dict_key(dict, key):
+    '''Returns the given key from a dictionary.'''
+    return dict.get(key)
