@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load dataset_extras %}
 
 {% block content %}
 <br/>
@@ -31,9 +32,14 @@
 <br />
 {% include "partials/dataset.html" with hide_leaderboard_link=True%}
 <br />
-{% if dataset.task_type == "two_image_comparison" %}
 <div>
+{% if dataset.task_type == "two_image_comparison" %}
     Unique files compared: {{unique_files_compared}} of {{total_files}}
-</div>
+{% elif dataset.task_type == "single_image_label" %}
+    <b>Number of results for each label name:</b><br/>
+    {% for label_name in dataset.label_names %}
+        {{ label_name|capfirst }}: {% firstof label_name_to_count|dict_key:label_name "0" %}<br />
+    {% endfor %}
 {% endif %}
+</div>
 {% endblock %}

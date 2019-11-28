@@ -1,11 +1,12 @@
 import tempfile
 
 from django.contrib import messages
-from django.db.models import Q
+from django.db.models import Q, Sum, Case, IntegerField, When
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.utils.text import slugify
 
+from data_model.enums import TaskType
 from data_model.export.dataset_export_models import RawDatasetExport, ProcessedDatasetExport, DatasetExport
 from data_model.models import Dataset
 from data_model.utils import annotate_datasets_for_view, annotate_dataset_for_view
@@ -134,6 +135,20 @@ def show_leaderboard(request, **kwargs):
                'users': users,
                'unique_files_compared': unique_files_compared,
                'total_files': len(dataset.keys)}
+
+    if dataset.task_type == TaskType.single_image_label.value:
+        qs = dataset.labels
+        label_name_to_count = {}
+
+        # TODO: fix inefficient for-loop. for each label_name a DB request with an aggregate is executed
+        for label_name in dataset.label_names:
+            label_name_count = qs.aggregate(**{label_name: Sum(Case(
+                When(Q(**{f'data__{label_name}': True}), then=1),
+                output_field=IntegerField(),
+            ))})
+            label_name_to_count = {**label_name_to_count, **label_name_count}
+        context['label_name_to_count'] = label_name_to_count
+
     return render(request, "leaderboard.html", context)
 
 
