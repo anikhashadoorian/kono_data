@@ -25,18 +25,18 @@ class RawDatasetExport(DatasetExport):
         'fields' a list or tuple of field model field names (strings)
         :returns (string) path to file
         """
-        fields = ['task', 'user_id', 'processing_time', 'loading_time'] + dataset.label_names + [cls.OUTDATED_KEYS]
+        fields = ['task', 'user_id', ] + dataset.label_names + [cls.OUTDATED_KEYS]
         nr_fields = len(fields)
         outdated_tasks_index = fields.index(cls.OUTDATED_KEYS)
         with open(file, 'w+') as f:
             writer = csv.writer(f)
             writer.writerow(fields)
-            for obj in dataset.labels:
+            for obj in dataset.labels.all():
                 if not obj.task:
                     continue
 
                 row = [''] * nr_fields
-                row[0] = obj.task
+                row[0] = obj.task.definition
                 row[1] = obj.user.id
                 row[outdated_tasks_index] = {}
 
