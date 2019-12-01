@@ -49,7 +49,7 @@
         <div class="col-md-6">
             {% if dataset %}
             <div>
-                {% include "partials/dataset.html" %}
+                {% include "partials/dataset.html" with hide_leaderboard_link=True %}
             </div>
             {% endif %}
 
