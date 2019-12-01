@@ -36,7 +36,7 @@ def signup(request, **kwargs):
 
     context = {'form': form}
     if invite_key and dataset:
-        context.update({'invite_key': invite_key, 'dataset': annotate_dataset_for_view(dataset)})
+        context.update({'invite_key': invite_key, 'dataset': annotate_dataset_for_view(dataset, request.user)})
 
     return render(request, 'signup.html', context)
 

@@ -13,8 +13,9 @@
 {% block content %}
 <br/>
 <div class="container-fluid">
+    {% if not user or user.is_anonymous %}
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-8 offset-md-2">
             <h2>Sign up</h2>
             <h4>Already have an account?
                 {% if invite_key %}
@@ -29,13 +30,13 @@
                 {% bootstrap_form form layout='inline' %}
                 <button type="submit" class="btn btn-success">Sign up</button>
             </form>
+
         </div>
+    </div>
+    {% endif %}
+    <br/>
+    <div class="row">
         <div class="col-md-6">
-            {% if dataset %}
-            <div>
-                {% include "partials/dataset.html" %}
-            </div>
-            {% endif %}
             <div>
                 <h2>What is kono data?</h2>
                 <p>
@@ -44,6 +45,14 @@
                     You can work on a dataset with a group of other people or by yourself.
                 </p>
             </div>
+        </div>
+        <div class="col-md-6">
+            {% if dataset %}
+            <div>
+                {% include "partials/dataset.html" %}
+            </div>
+            {% endif %}
+
         </div>
     </div>
 </div>
