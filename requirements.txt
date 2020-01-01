@@ -26,7 +26,7 @@ future==0.16.0
 graphene==2.1.6
 graphene-django==2.3.2
 graphql-core==2.2
-graphql-relay==0.4.5
+graphql-relay==3.0.0
 hjson==3.0.1
 html5lib==1.0.1
 idna==2.6
