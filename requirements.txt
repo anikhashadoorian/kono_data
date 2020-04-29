@@ -19,7 +19,7 @@ django-filter==2.1.0
 django-markdownify==0.8.0
 django-markdownx==2.0.28
 django-storages==1.7.1
-django-user-accounts==2.0.3
+django-user-accounts==3.0.2
 docutils==0.14
 durationpy==0.5
 future==0.16.0
