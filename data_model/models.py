@@ -153,7 +153,8 @@ class Dataset(models.Model):
                                                                    prev_task_definitions=prev_task_definitions)
 
         else:
-            task_definitions = keys
+            existing_keys = list(self.tasks.values_list('definition', flat=True))
+            task_definitions = [key for key in keys if key not in existing_keys]
 
         logger.info(f'Start to create {len(task_definitions)} new tasks')
         Task.objects.bulk_create([
@@ -254,6 +255,9 @@ class Dataset(models.Model):
 class Task(models.Model):
     class Meta:
         db_table = 'Task'
+        constraints = [
+            models.UniqueConstraint(fields=['dataset', 'definition'], name='Task with definition per dataset must be unique constraint')
+        ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     created_at = models.DateTimeField(auto_now_add=True)
