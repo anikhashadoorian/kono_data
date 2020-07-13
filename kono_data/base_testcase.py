@@ -64,7 +64,7 @@ class BaseTestCase(TestCase):
 
     @classmethod
     def generate_task(cls, dataset, **kwargs):
-        add_to_dic_if_not_exist(kwargs, 'definition', 'HOTDOG OR NOT')
+        add_to_dic_if_not_exist(kwargs, 'definition', f'HOTDOG OR NOT {uuid.uuid4()}')
         return Task.objects.create(dataset=dataset, **kwargs)
 
     @classmethod
