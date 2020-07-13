@@ -152,7 +152,6 @@ STATIC_URL = '/static/'
 
 SITE_ID = 1
 
-# view settings
 MARKDOWNIFY_WHITELIST_TAGS = [
     'a',
     'abbr',

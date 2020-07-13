@@ -6,22 +6,20 @@
 {% endblock %}
 {% block process %}
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-sm-12 col-md-6">
-            <img src="{{ task_source }}" class="img-thumbnail media img-responsive" alt="Responsive image"/>
-        </div>
-        <div class="col-sm-12 col-md-6 col-1-offset">
-            <div>
+    <div class="row justify-content-center">
+            <img src="{{ task_source }}" class="img-thumbnail media img-fluid img-responsive" alt="Responsive image"/>
+    </div>
+    <div class="row justify-content-center mt-4">
+        <div class="col-sm-12 col-md-6 col-2-offset">
                 <form action="{% url 'process' dataset.id %}" method="post" class="form" onsubmit="onSubmitProcessing()">
                     {% csrf_token %}
-                    {% bootstrap_form form layout='inline' %}
+                    {% bootstrap_form form %}
                     <input type="hidden" name="task_id" value="{{ task_id }}"/>
                     <input type="hidden" name="processing-time" id="form-processing-time" />
                     <input type="hidden" name="loading-time" id="form-loading-time" />
                     <button type="submit" class="btn btn-success">Save</button>
                     <button type="submit" name="skip" class="btn btn-secondary" value="skip">Skip</button>
                 </form>
-            </div>
         </div>
     </div>
 </div>
