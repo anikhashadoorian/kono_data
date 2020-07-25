@@ -5,21 +5,43 @@
 <script type="text/javascript" src="{% static 'data_model/js/process_single_image_label.js' %}"></script>
 {% endblock %}
 {% block process %}
+<style>
+    .form-inline {
+        display: flex;
+        flex-flow: row wrap;
+        align-items: center;
+    }
+
+    /* Add some margins for each label */
+    .form-inline label {
+        margin: 5px 10px 5px 0;
+    }
+
+    .form-inline input {
+        vertical-align: middle;
+        margin: 5px 10px 5px 5px;
+        padding: 10px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+    }
+
+</style>
 <div class="container-fluid">
     <div class="row justify-content-center">
-            <img src="{{ task_source }}" class="img-thumbnail media img-fluid img-responsive" alt="Responsive image"/>
+        <img src="{{ task_source }}" style="object-fit:contain;width:120%;" class="" alt="Responsive image"/>
     </div>
     <div class="row justify-content-center mt-4">
         <div class="col-sm-12 col-md-6 col-2-offset">
-                <form action="{% url 'process' dataset.id %}" method="post" class="form" onsubmit="onSubmitProcessing()">
-                    {% csrf_token %}
-                    {% bootstrap_form form %}
-                    <input type="hidden" name="task_id" value="{{ task_id }}"/>
-                    <input type="hidden" name="processing-time" id="form-processing-time" />
-                    <input type="hidden" name="loading-time" id="form-loading-time" />
-                    <button type="submit" class="btn btn-success">Save</button>
-                    <button type="submit" name="skip" class="btn btn-secondary" value="skip">Skip</button>
-                </form>
+            <form action="{% url 'process' dataset.id %}" method="post" class="form form-inline"
+                  onsubmit="onSubmitProcessing()">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                <input type="hidden" name="task_id" value="{{ task_id }}"/>
+                <input type="hidden" name="processing-time" id="form-processing-time"/>
+                <input type="hidden" name="loading-time" id="form-loading-time"/>
+                <button type="submit" class="btn btn-success">Save</button>
+                <!--                <button type="submit" name="skip" class="btn btn-secondary" value="skip">Skip</button>-->
+            </form>
         </div>
     </div>
 </div>
